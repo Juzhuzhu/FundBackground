@@ -1,10 +1,16 @@
 package com.fund.adapters.api.cmd.impl;
 
 import com.fund.adapters.api.cmd.UserCmdRestApi;
+import com.fund.dto.cmd.UserRegisterCmd;
+import com.fund.service.UserCmdService;
+import com.fund.utils.NoDataResult;
+import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 
 /**
- * 内容
+ * 用户注册登录命令
  * <p>
  * Create at 2023/02/20 22:28
  *
@@ -12,11 +18,19 @@ import org.springframework.stereotype.Controller;
  * @version 1.0.0, 2023/02/20
  * @since 1.0.0
  */
-@Controller()
+@Slf4j
+@Controller
 public class UserCmdRes implements UserCmdRestApi {
-    @Override
-    public String Hello() {
-        return "hello";
+
+    private final UserCmdService userCmdService;
+
+    public UserCmdRes(UserCmdService userCmdService) {
+        this.userCmdService = userCmdService;
     }
 
+    @Override
+    public NoDataResult userRegister(@Valid @RequestBody UserRegisterCmd userRegisterCmd) {
+        userCmdService.userRegister(userRegisterCmd);
+        return NoDataResult.success();
+    }
 }

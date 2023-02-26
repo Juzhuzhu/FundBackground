@@ -1,4 +1,4 @@
-package com.fund.adapters.util;
+package com.fund.utils;
 
 import lombok.Data;
 
@@ -73,6 +73,14 @@ public class Result<T extends Serializable> implements Serializable {
         return Result.ok(data, OK_MSG);
     }
 
+    public static <T extends Serializable> Result<T> error(T data) {
+        return Result.error(data, ERROR_MSG);
+    }
+
+    public static <T extends Serializable> Result<T> error(T data, String message) {
+        return Result.error(data, null, null, message);
+    }
+
     public static <T extends Serializable> Result<T> ok(T data, String message) {
         return Result.ok(data, null, null, message);
     }
@@ -120,6 +128,17 @@ public class Result<T extends Serializable> implements Serializable {
                                                          Serializable extend, String message) {
         Result<T> result = new Result<>();
         result.code = OK_200;
+        result.data = data;
+        result.dataList = dataList;
+        result.extend = extend;
+        result.message = message;
+        return result;
+    }
+
+    private static <T extends Serializable> Result<T> error(T data, Collection<T> dataList,
+                                                            Serializable extend, String message) {
+        Result<T> result = new Result<>();
+        result.code = ERROR_500;
         result.data = data;
         result.dataList = dataList;
         result.extend = extend;

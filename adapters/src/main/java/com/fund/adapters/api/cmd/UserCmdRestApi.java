@@ -1,6 +1,10 @@
 package com.fund.adapters.api.cmd;
 
 import com.fund.CustomerServiceRestConst;
+import com.fund.dto.cmd.UserRegisterCmd;
+import com.fund.utils.NoDataResult;
+import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -16,7 +20,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public interface UserCmdRestApi {
     String USER_REGISTER = CustomerServiceRestConst.USER_ROOT + "/register";
 
+    /**
+     * 用户注册
+     *
+     * @param userRegisterCmd 传入用户名，账号，密码
+     * @return NoDataResult
+     */
     @ResponseBody
     @RequestMapping(USER_REGISTER)
-    public String Hello();
+    NoDataResult userRegister(@Valid @RequestBody UserRegisterCmd userRegisterCmd);
 }
