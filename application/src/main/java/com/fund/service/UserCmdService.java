@@ -1,10 +1,14 @@
 package com.fund.service;
 
+import com.fund.dto.cmd.UserLoginCmd;
 import com.fund.dto.cmd.UserRegisterCmd;
+import com.fund.enumeration.CustomerServiceRestConst;
 import com.fund.exception.BizException;
 import com.fund.gateway.UserCmdRepo;
 import com.fund.utils.IdGenerator;
+import com.fund.utils.JwtUtils;
 import com.fund.utils.PasswordUtils;
+import com.fund.vo.UserInfoResp;
 import com.google.common.base.Preconditions;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -22,6 +26,7 @@ import org.springframework.validation.annotation.Validated;
 import java.io.Serializable;
 
 import static com.fund.enumeration.CodeEnum.SAVE_USER_ERROR;
+import static com.fund.enumeration.CodeEnum.USER_STATUS_ERROR;
 
 /**
  * 用户登录注册业务逻辑层
@@ -47,6 +52,11 @@ public class UserCmdService {
         this.userCmdRepo = userCmdRepo;
     }
 
+    /**
+     * 用户注册应用层
+     *
+     * @param cmd UserRegisterCmd
+     */
     @Transactional(rollbackFor = Exception.class)
     public void userRegister(@Valid UserRegisterCmd cmd) {
         Preconditions.checkNotNull(cmd, "注册传入参数为空");
@@ -68,7 +78,6 @@ public class UserCmdService {
                 .setUserId(userId)
                 .setOpenCode(cmd.getPhoneNumber() + "+")
                 .setCategory(0);
-
         //保存到账号表
         if (!userCmdRepo.saveAccount(accountInfo)) {
             throw new BizException(SAVE_USER_ERROR.getMessage(), SAVE_USER_ERROR.getCode());
@@ -77,7 +86,36 @@ public class UserCmdService {
         if (!userCmdRepo.saveUserRegister(userInfo)) {
             throw new BizException(SAVE_USER_ERROR.getMessage(), SAVE_USER_ERROR.getCode());
         }
+    }
 
+    /**
+     * 用户登录应用层
+     *
+     * @param userLoginCmd UserLoginCmd
+     * @return UserInfoResp
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public UserInfoResp userLogin(@Valid UserLoginCmd userLoginCmd) {
+        Preconditions.checkNotNull(userLoginCmd, "登录信息为空！");
+        //校验账号密码是否一致
+        String passwordByMd5 = PasswordUtils.getMD5(userLoginCmd.getPassword());
+        UserInfoResp resp = userCmdRepo.getUserByArgs(userLoginCmd.getPhoneNumber(), passwordByMd5);
+        //校验该用户是否为正常状态
+        if (!userCmdRepo.getUserStatusById(resp.getId())) {
+            throw new BizException(USER_STATUS_ERROR.getMessage(), USER_STATUS_ERROR.getCode());
+        }
+        Preconditions.checkNotNull(resp, "账号或密码错误！");
+        //生成token
+        String token = JwtUtils.createToken(resp.getId(), resp.getName());
+        resp.setToken(token);
+        //如果没有头像则设置默认头像
+        if (resp.getHeadImgUrl() == null) {
+            resp.setHeadImgUrl(CustomerServiceRestConst.DEFAULT_HEAD_IMG_URL);
+        }
+        //保存token
+        userCmdRepo.saveUserById(resp.getId(), token);
+        //包装vo对象返回
+        return resp;
     }
 
     @Getter

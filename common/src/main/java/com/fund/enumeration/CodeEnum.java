@@ -13,9 +13,12 @@ import lombok.Getter;
  */
 @Getter
 public enum CodeEnum {
-    //注册功能失败
+    //Enum
     SAVE_USER_ERROR(5000, "用户注册失败"),
-    ;
+    USER_LOGIN_ERROR(5001, "账号或密码错误"),
+    USER_STATUS_ERROR(5002, "该用户封禁中"),
+    USER_TOKEN_CONFLICT(5003, "TOKEN冲突！有两个token一致"),
+    USER_TOKEN_NONE(5004,"TOKEN失效");
 
     /**
      * 状态码

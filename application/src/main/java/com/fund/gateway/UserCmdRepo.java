@@ -1,6 +1,7 @@
 package com.fund.gateway;
 
 import com.fund.service.UserCmdService;
+import com.fund.vo.UserInfoResp;
 
 /**
  * 用户注册登录repo
@@ -35,4 +36,31 @@ public interface UserCmdRepo {
      * @return boolean
      */
     boolean saveAccount(UserCmdService.AccountInfo accountInfo);
+
+    /**
+     * 获取用户信息
+     *
+     * @param phoneNumber   phoneNumber
+     * @param passwordByMd5 password
+     * @return UserInfoResp
+     */
+    UserInfoResp getUserByArgs(String phoneNumber, String passwordByMd5);
+
+    /**
+     * 获取用户状态
+     *
+     * @param id 用户id
+     * @return Boolean
+     */
+    boolean getUserStatusById(String id);
+
+    /**
+     * 根据id保存token
+     *
+     * @param id    用户id
+     * @param token 令牌
+     */
+    void saveUserById(String id, String token);
+
+
 }

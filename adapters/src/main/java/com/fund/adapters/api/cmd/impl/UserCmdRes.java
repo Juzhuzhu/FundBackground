@@ -1,9 +1,12 @@
 package com.fund.adapters.api.cmd.impl;
 
 import com.fund.adapters.api.cmd.UserCmdRestApi;
+import com.fund.dto.cmd.UserLoginCmd;
 import com.fund.dto.cmd.UserRegisterCmd;
 import com.fund.service.UserCmdService;
 import com.fund.utils.NoDataResult;
+import com.fund.utils.Result;
+import com.fund.vo.UserInfoResp;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -32,5 +35,11 @@ public class UserCmdRes implements UserCmdRestApi {
     public NoDataResult userRegister(@Valid @RequestBody UserRegisterCmd userRegisterCmd) {
         userCmdService.userRegister(userRegisterCmd);
         return NoDataResult.success();
+    }
+
+    @Override
+    public Result<UserInfoResp> userLogin(@Valid @RequestBody UserLoginCmd userLoginCmd) {
+        UserInfoResp userInfoResp = userCmdService.userLogin(userLoginCmd);
+        return Result.ok(userInfoResp);
     }
 }

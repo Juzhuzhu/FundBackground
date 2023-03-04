@@ -9,6 +9,7 @@ import com.fund.infras.dao.model.FundUserPO;
 import com.fund.infras.dao.service.AccountPersist;
 import com.fund.infras.dao.service.UserPersist;
 import com.fund.service.UserCmdService;
+import com.fund.vo.UserInfoResp;
 import com.google.common.base.Preconditions;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
@@ -57,6 +58,34 @@ public class UserCmdRepoImpl implements UserCmdRepo {
         return accountPersist.save(MAPPER.toAccPo(accountInfo));
     }
 
+    @Override
+    public boolean getUserStatusById(String id) {
+        Preconditions.checkNotNull(id, "用户id为空");
+        FundUserPO poById = userPersist.getById(id);
+        int state = poById.getState();
+        return state == 0;
+    }
+
+    @Override
+    public UserInfoResp getUserByArgs(String phoneNumber, String passwordByMd5) {
+        LambdaQueryWrapper<FundUserPO> wrapper = Wrappers.lambdaQuery();
+        wrapper.eq(phoneNumber != null, FundUserPO::getPhoneNumber, phoneNumber)
+                .eq(passwordByMd5 != null, FundUserPO::getPassword, passwordByMd5);
+        FundUserPO po = userPersist.getOne(wrapper);
+
+        return MAPPER.toResp(po);
+    }
+
+
+    @Override
+    public void saveUserById(String id, String token) {
+        FundUserPO fundUserPo = new FundUserPO();
+        fundUserPo.setId(id);
+        fundUserPo.setToken(token);
+        userPersist.updateById(fundUserPo);
+    }
+
+
     @org.mapstruct.Mapper
     interface Mapper {
         Mapper INSTANCE = Mappers.getMapper(Mapper.class);
@@ -84,5 +113,13 @@ public class UserCmdRepoImpl implements UserCmdRepo {
         @Mapping(target = "utcDeleted", ignore = true)
         @Mapping(target = "utcCreate", ignore = true)
         FundAccountPO toAccPo(UserCmdService.AccountInfo accountInfo);
+
+        /**
+         * 将FundUserPO转换成UserInfoResp
+         *
+         * @param po FundUserPO
+         * @return UserInfoResp
+         */
+        UserInfoResp toResp(FundUserPO po);
     }
 }

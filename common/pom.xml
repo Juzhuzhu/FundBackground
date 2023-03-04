@@ -15,5 +15,23 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
     </properties>
+    <dependencies>
+        <!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>0.9.1</version>
+        </dependency>
+        <!--
+        缺少jaxb-api包导致的NoClassDefFoundError。
+        在Java 8以及以前的版本，是默认包含jaxb这个jar包的；但是在java SE 9.0之后就不再包含着个包了
+        -->
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.3.0</version>
+        </dependency>
 
+
+    </dependencies>
 </project>
