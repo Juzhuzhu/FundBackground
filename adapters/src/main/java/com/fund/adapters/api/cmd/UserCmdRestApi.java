@@ -7,8 +7,6 @@ import com.fund.utils.NoDataResult;
 import com.fund.utils.Result;
 import com.fund.vo.UserInfoResp;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -50,7 +48,7 @@ public interface UserCmdRestApi {
      * @return Result<UserInfoResp>
      */
     @Operation(summary = "用户登录", security = {@SecurityRequirement(name = "Authorization")})
-    @Parameter(name = "token", in = ParameterIn.HEADER, required = true, description = "认证token", example = "Bearer ")
+//    @Parameter(name = "token", in = ParameterIn.HEADER, required = true, description = "认证token", example = "Bearer ") 测试swagger测试时传入header带token
     @ResponseBody
     @PostMapping(USER_LOGIN)
     Result<UserInfoResp> userLogin(@Valid @RequestBody UserLoginCmd userLoginCmd);

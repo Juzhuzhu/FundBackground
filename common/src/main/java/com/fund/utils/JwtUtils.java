@@ -17,12 +17,15 @@ import java.util.Base64;
  * @since 1.0.0
  */
 public class JwtUtils {
-    private final static Long TOKEN_EXPIRATION = (long) (1000 * 60 * 60 * 24);
+    private static final Long TOKEN_EXPIRATION = (long) (1000 * 60 * 60 * 24);
     //    private final static Long TOKEN_EXPIRATION = (long) (1000 * 10);
     /**
      * token密钥
      */
     private static final String TOKEN_SING_KEY = "juZhuZhuFundSystem";
+
+    public JwtUtils() {
+    }
 
     private static Key getKeyInstance() {
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
@@ -98,17 +101,6 @@ public class JwtUtils {
         Jws<Claims> claimsJws = Jwts.parser().setSigningKey(getKeyInstance()).parseClaimsJws(token);
         return claimsJws.getBody();
     }
-
-    /*public static void main(String[] args) {
-        String token = createToken("123", "abc");
-        System.out.println(token);
-        String id = getId(token);
-        System.out.println(id);
-        String name = getName(token);
-        System.out.println(name);
-        boolean b = checkToken(token);
-        System.out.println(b);
-    }*/
 
 
 }
