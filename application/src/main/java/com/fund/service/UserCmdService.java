@@ -25,8 +25,7 @@ import org.springframework.validation.annotation.Validated;
 
 import java.io.Serializable;
 
-import static com.fund.enumeration.CodeEnum.SAVE_USER_ERROR;
-import static com.fund.enumeration.CodeEnum.USER_STATUS_ERROR;
+import static com.fund.enumeration.CodeEnum.*;
 
 /**
  * 用户登录注册业务逻辑层
@@ -61,7 +60,9 @@ public class UserCmdService {
     public void userRegister(@Valid UserRegisterCmd cmd) {
         Preconditions.checkNotNull(cmd, "注册传入参数为空");
         //校验是否已存在用户
-        Preconditions.checkArgument(userCmdRepo.getUserByNum(cmd.getPhoneNumber()), "该手机号码已注册！");
+        if (!userCmdRepo.getUserByNum(cmd.getPhoneNumber())) {
+            throw new BizException(PHONE_NUM_EXIST.getMessage(), PHONE_NUM_EXIST.getCode());
+        }
 
         //转换成UserInfo对象
         UserInfo userInfo = MAPPER.toInfo(cmd);

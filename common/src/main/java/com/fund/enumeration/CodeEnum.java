@@ -18,7 +18,8 @@ public enum CodeEnum {
     USER_LOGIN_ERROR(5001, "账号或密码错误"),
     USER_STATUS_ERROR(5002, "该用户封禁中"),
     USER_TOKEN_CONFLICT(5003, "TOKEN冲突！有两个token一致"),
-    USER_TOKEN_NONE(5004,"TOKEN失效");
+    USER_TOKEN_NONE(5004,"TOKEN失效"),
+    PHONE_NUM_EXIST(5005, "该手机号码已注册！");
 
     /**
      * 状态码

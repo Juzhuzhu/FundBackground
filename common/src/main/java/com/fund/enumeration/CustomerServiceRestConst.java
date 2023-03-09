@@ -19,12 +19,27 @@ public final class CustomerServiceRestConst {
     public static final String ABOUT_QUERY = "/查询相关";
 
     /**
+     * 基金历史净值表名前缀
+     */
+    public static final String TABLE_NAME_PREFIX = "fund_";
+
+
+    /**
      * 用户登录注册模块
      */
     public static final String USER_ROOT = "/user";
     public static final String API_TAG_USER = "用户系统";
 
     public static final String API_TAG_USER_CMD = API_TAG_USER + ABOUT_CMD;
+
+    /**
+     * 基金查询模块
+     */
+    public static final String FUND_ROOT = "/fund";
+
+    public static final String API_TAG_FUND = "基金系统";
+
+    public static final String API_TAG_FUND_QUERY = API_TAG_FUND + ABOUT_QUERY;
 
 
 }

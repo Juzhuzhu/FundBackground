@@ -7,6 +7,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import static com.fund.adapters.api.cmd.UserCmdRestApi.USER_LOGIN;
 import static com.fund.adapters.api.cmd.UserCmdRestApi.USER_REGISTER;
+import static com.fund.adapters.api.query.FundQueryRestApi.FUND_HISTORY;
+import static com.fund.adapters.api.query.FundQueryRestApi.FUND_LIST;
 
 /**
  * token拦截器配置类
@@ -40,7 +42,9 @@ public class TokenInterceptorConfig implements WebMvcConfigurer {
                 .excludePathPatterns(SWAGGER_RESOURCE)
                 .excludePathPatterns(
                         USER_LOGIN,
-                        USER_REGISTER
+                        USER_REGISTER,
+                        FUND_LIST,
+                        FUND_HISTORY
                 );
     }
 }

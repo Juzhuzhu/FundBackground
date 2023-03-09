@@ -1,5 +1,6 @@
 package com.fund.infras.dao.mapper;
 
+import com.baomidou.mybatisplus.annotation.InterceptorIgnore;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.fund.infras.dao.model.FundUserPO;
 import org.apache.ibatis.annotations.Mapper;
@@ -14,5 +15,6 @@ import org.apache.ibatis.annotations.Mapper;
  * @since 1.0.0
  */
 @Mapper
+@InterceptorIgnore(dynamicTableName = "true")
 public interface UserMapper extends BaseMapper<FundUserPO> {
 }
