@@ -18,8 +18,11 @@ public enum CodeEnum {
     USER_LOGIN_ERROR(5001, "账号或密码错误"),
     USER_STATUS_ERROR(5002, "该用户封禁中"),
     USER_TOKEN_CONFLICT(5003, "TOKEN冲突！有两个token一致"),
-    USER_TOKEN_NONE(5004,"TOKEN失效"),
-    PHONE_NUM_EXIST(5005, "该手机号码已注册！");
+    USER_TOKEN_NONE(5004, "TOKEN失效"),
+    PHONE_NUM_EXIST(5005, "该手机号码已注册！"),
+    FUND_CODE_NULL(5006, "基金代码为空"),
+    FUND_CODE_DIFF(5007, "同一个页面请求的基金代码不一致"),
+    DATA_SIZE_DIFF(5008,"X轴和Y轴数据量不一致");
 
     /**
      * 状态码

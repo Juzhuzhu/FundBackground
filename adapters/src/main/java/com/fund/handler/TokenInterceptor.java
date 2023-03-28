@@ -10,6 +10,8 @@ import com.google.common.base.Preconditions;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -39,7 +41,20 @@ public class TokenInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+        //跨域
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Access-Control-Allow-Credentials", "true");
+        response.setHeader("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS");
+        response.setHeader("Access-Control-Max-Age", "86400");
+        response.setHeader("Access-Control-Allow-Headers", "*");
+        // 如果是OPTIONS则结束请求
+        if (HttpMethod.OPTIONS.toString().equals(request.getMethod())) {
+            response.setStatus(HttpStatus.NO_CONTENT.value());
+            return false;
+        }
+        //Token拦截
         log.info(">>>TokenInterceptor>>>>>>>在请求处理之前进行调用（Controller方法调用之前)");
+        log.info("请求路径：====》" + request.getRequestURL());
         //获取请求头TOKEN
         String token = request.getHeader("token");
         log.info("token : [ {} ]", token);
@@ -56,6 +71,8 @@ public class TokenInterceptor implements HandlerInterceptor {
         if (list.isEmpty() || !JwtUtils.checkToken(token)) {
             throw new BizException(USER_TOKEN_NONE.getMessage(), USER_TOKEN_NONE.getCode());
         }
+
+
         // 只有返回true才会继续向下执行，返回false取消当前请求
         return true;
     }

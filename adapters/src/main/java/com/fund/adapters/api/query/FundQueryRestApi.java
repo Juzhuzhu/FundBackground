@@ -3,6 +3,7 @@ package com.fund.adapters.api.query;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.fund.entity.qry.FundHistoryQry;
 import com.fund.entity.qry.FundListQry;
+import com.fund.entity.resp.FundEchartsResp;
 import com.fund.entity.resp.FundHistoryResp;
 import com.fund.entity.resp.FundResp;
 import com.fund.enumeration.CustomerServiceRestConst;
@@ -12,6 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 
@@ -30,6 +32,8 @@ public interface FundQueryRestApi {
     String FUND_LIST = CustomerServiceRestConst.FUND_ROOT + "/list";
 
     String FUND_HISTORY = CustomerServiceRestConst.FUND_ROOT + "/history";
+
+    String FUND_ECHARTS = CustomerServiceRestConst.FUND_ROOT + "/echarts";
 
     /**
      * 分页查询基金列表
@@ -52,4 +56,15 @@ public interface FundQueryRestApi {
     @ResponseBody
     @PostMapping(FUND_HISTORY)
     Result<IPage<FundHistoryResp>> fundHistorySearch(@Valid @RequestBody FundHistoryQry fundHistoryQry);
+
+    /**
+     *查询该基金所有净值
+     *
+     * @param fundCode 基金代码
+     * @return Result<FundEchartsResp>
+     */
+    @Operation(summary = "查询该基金所有净值")
+    @ResponseBody
+    @PostMapping(FUND_ECHARTS)
+    Result<FundEchartsResp> fundEcharts(@RequestParam("fundCode") String fundCode);
 }

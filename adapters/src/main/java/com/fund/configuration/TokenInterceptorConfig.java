@@ -2,13 +2,13 @@ package com.fund.configuration;
 
 import com.fund.handler.TokenInterceptor;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import static com.fund.adapters.api.cmd.UserCmdRestApi.USER_LOGIN;
 import static com.fund.adapters.api.cmd.UserCmdRestApi.USER_REGISTER;
-import static com.fund.adapters.api.query.FundQueryRestApi.FUND_HISTORY;
-import static com.fund.adapters.api.query.FundQueryRestApi.FUND_LIST;
+import static com.fund.adapters.api.query.FundQueryRestApi.*;
 
 /**
  * token拦截器配置类
@@ -29,6 +29,25 @@ public class TokenInterceptorConfig implements WebMvcConfigurer {
 
     private static final String[] SWAGGER_RESOURCE = {"/swagger-resources/**", "/webjars/**", "/v3/**", "/swagger-ui.html/**", "/swagger-ui/**", "/mgr", "/mgr/**", "/h5", "/h5/**"};
 
+    /**
+     * 允许跨域
+     *
+     * @param registry CorsRegistry
+     */
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**").
+                allowCredentials(true).
+                allowedHeaders("*").
+                allowedOriginPatterns("*").
+                allowedMethods("*");
+    }
+
+    /**
+     * 配置token拦截器
+     *
+     * @param registry InterceptorRegistry
+     */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         // 多个拦截器组成一个拦截器链
@@ -44,7 +63,8 @@ public class TokenInterceptorConfig implements WebMvcConfigurer {
                         USER_LOGIN,
                         USER_REGISTER,
                         FUND_LIST,
-                        FUND_HISTORY
+                        FUND_HISTORY,
+                        FUND_ECHARTS
                 );
     }
 }

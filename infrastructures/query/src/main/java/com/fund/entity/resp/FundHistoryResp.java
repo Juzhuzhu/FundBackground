@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 /**
- * 内容
+ * 基金历史净值
  * <p>
  * Create at 2023/03/08 23:11
  *
@@ -27,8 +27,8 @@ public class FundHistoryResp {
     @Schema(title = "主键id")
     private Integer id;
 
-    @Schema(title = "关联基金id")
-    private Integer fundId;
+/*    @Schema(title = "关联基金id")
+    private Integer fundId;*/
 
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     @Schema(title = "基金日期")

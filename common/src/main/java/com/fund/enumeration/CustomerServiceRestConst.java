@@ -25,13 +25,16 @@ public final class CustomerServiceRestConst {
 
 
     /**
-     * 用户登录注册模块
+     * 用户cmd模块
      */
     public static final String USER_ROOT = "/user";
     public static final String API_TAG_USER = "用户系统";
-
     public static final String API_TAG_USER_CMD = API_TAG_USER + ABOUT_CMD;
 
+    /**
+     * 用户查询模块
+     */
+    public static final String API_TAG_USER_QUERY = API_TAG_USER + ABOUT_QUERY;
     /**
      * 基金查询模块
      */

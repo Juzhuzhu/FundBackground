@@ -29,8 +29,8 @@ public class FundHistoryPO {
     @Schema(title = "主键id")
     private Integer id;
 
-    @Schema(title = "关联基金id")
-    private Integer fundId;
+    /*@Schema(title = "关联基金id")
+    private Integer fundId;*/
 
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     @Schema(title = "基金日期")
