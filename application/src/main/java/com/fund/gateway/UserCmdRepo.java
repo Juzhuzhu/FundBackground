@@ -63,4 +63,17 @@ public interface UserCmdRepo {
     void saveUserById(String id, String token);
 
 
+    /**
+     * 根据user_id为条件删除account
+     *
+     * @param id user_id
+     */
+    void delectAccountByUserId(String id);
+
+    /**
+     * 根据主键id删除user
+     *
+     * @param id 主键id
+     */
+    void deleteUserById(String id);
 }

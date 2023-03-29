@@ -3,6 +3,7 @@ package com.fund.adapters.api.cmd.impl;
 import com.fund.adapters.api.cmd.UserCmdRestApi;
 import com.fund.dto.cmd.UserLoginCmd;
 import com.fund.dto.cmd.UserRegisterCmd;
+import com.fund.dto.cmd.UserUpdateCmd;
 import com.fund.service.UserCmdService;
 import com.fund.utils.NoDataResult;
 import com.fund.utils.Result;
@@ -11,6 +12,7 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * 用户注册登录命令
@@ -41,5 +43,16 @@ public class UserCmdRes implements UserCmdRestApi {
     public Result<UserInfoResp> userLogin(@Valid @RequestBody UserLoginCmd userLoginCmd) {
         UserInfoResp userInfoResp = userCmdService.userLogin(userLoginCmd);
         return Result.ok(userInfoResp);
+    }
+
+    @Override
+    public NoDataResult deleteUserById(@RequestParam("id") String id) {
+        userCmdService.deleteUserById(id);
+        return NoDataResult.success();
+    }
+
+    @Override
+    public NoDataResult updateUserById(UserUpdateCmd userUpdateCmd) {
+        return null;
     }
 }

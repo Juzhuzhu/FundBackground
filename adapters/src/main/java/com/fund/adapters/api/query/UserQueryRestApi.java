@@ -1,15 +1,20 @@
 package com.fund.adapters.api.query;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.fund.entity.qry.UserListQry;
-import com.fund.entity.resp.UserListResp;
+import com.fund.infras.dao.entity.qry.UserQry;
+import com.fund.infras.dao.entity.resp.UserResp;
 import com.fund.enumeration.CustomerServiceRestConst;
 import com.fund.utils.Result;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
- * 用户查询api
+ * 管理员-用户管理模块query
  * <p>
  * Create at 2023/03/27 22:18
  *
@@ -24,8 +29,12 @@ public interface UserQueryRestApi {
     /**
      * 分页查询用户列表
      *
-     * @param userListQry UserListQry
-     * @return Result<IPage<UserListResp>>
+     * @param userQry UserListQry
+     * @return Result<IPage < UserListResp>>
      */
-    Result<IPage<UserListResp>> getUserList(@RequestBody UserListQry userListQry);
+    @Parameter(name = "token", in = ParameterIn.HEADER, required = true, description = "认证token", example = CustomerServiceRestConst.EXAMPLE_TOKEN)
+    @Operation(summary = "分页查询用户列表")
+    @ResponseBody
+    @PostMapping(USER_LIST)
+    Result<IPage<UserResp>> getUserList(@RequestBody UserQry userQry);
 }

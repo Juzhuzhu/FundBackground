@@ -14,6 +14,8 @@ public final class CustomerServiceRestConst {
         throw new IllegalStateException();
     }
 
+    public static final String EXAMPLE_TOKEN = "eyJhbGciOiJIUzUxMiIsInppcCI6IkdaSVAifQ.H4sIAAAAAAAA_6tWKi5NUrJScgv1c9ENDXYNUtJRykwBClgYWZqYGFoampuYGVsYGRkbmwFl8hJzU4Fyz1bOeN6zCoiUagH1Lv2ZQAAAAA.S6NYPvitMnOlPFwSfNkMYRm0cOnIyCYyD38jfCeOD8vxlcScCclRDO0K92do6UyzzI3CaMLKTAikxEksezPLFQ";
+
     public static final String DEFAULT_HEAD_IMG_URL = "https://lkm191.oss-cn-guangzhou.aliyuncs.com/Screenshot_20200827_231650.jpg";
     public static final String ABOUT_CMD = "/指令相关";
     public static final String ABOUT_QUERY = "/查询相关";

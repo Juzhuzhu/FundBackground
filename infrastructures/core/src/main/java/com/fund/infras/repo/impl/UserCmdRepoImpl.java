@@ -3,6 +3,7 @@ package com.fund.infras.repo.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.fund.exception.BizException;
 import com.fund.gateway.UserCmdRepo;
 import com.fund.infras.dao.model.FundAccountPO;
 import com.fund.infras.dao.model.FundUserPO;
@@ -83,6 +84,22 @@ public class UserCmdRepoImpl implements UserCmdRepo {
         fundUserPo.setId(id);
         fundUserPo.setToken(token);
         userPersist.updateById(fundUserPo);
+    }
+
+    @Override
+    public void delectAccountByUserId(String id) {
+        LambdaQueryWrapper<FundAccountPO> wrapper = Wrappers.lambdaQuery();
+        wrapper.eq(id != null, FundAccountPO::getUserId, id);
+        if (!accountPersist.remove(wrapper)) {
+            throw new BizException("删除Account失败！id=" + id);
+        }
+    }
+
+    @Override
+    public void deleteUserById(String id) {
+        if (!userPersist.removeById(id)) {
+            throw new BizException("删除User失败！id=" + id);
+        }
     }
 
 

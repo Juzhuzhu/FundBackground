@@ -1,4 +1,4 @@
-package com.fund.entity.qry;
+package com.fund.infras.dao.entity.qry;
 
 import com.fund.utils.PageRequest;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -19,5 +19,5 @@ import lombok.ToString;
 @Setter
 @Getter
 @ToString
-public class UserListQry extends PageRequest {
+public class UserQry extends PageRequest {
 }

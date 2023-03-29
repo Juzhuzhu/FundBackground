@@ -119,6 +119,20 @@ public class UserCmdService {
         return resp;
     }
 
+    /**
+     * 根据id删除用户业务层
+     *
+     * @param id 用户id
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteUserById(String id) {
+        Preconditions.checkNotNull(id, "删除用户传入id为空");
+        //根据user_id为条件删除account
+        userCmdRepo.delectAccountByUserId(id);
+        //再根据id主键删除user
+        userCmdRepo.deleteUserById(id);
+    }
+
     @Getter
     @Setter
     @ToString

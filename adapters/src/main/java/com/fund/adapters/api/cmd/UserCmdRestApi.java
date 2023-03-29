@@ -1,22 +1,27 @@
 package com.fund.adapters.api.cmd;
 
 import com.fund.dto.cmd.UserLoginCmd;
+import com.fund.dto.cmd.UserUpdateCmd;
 import com.fund.enumeration.CustomerServiceRestConst;
 import com.fund.dto.cmd.UserRegisterCmd;
 import com.fund.utils.NoDataResult;
 import com.fund.utils.Result;
 import com.fund.vo.UserInfoResp;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 
 /**
  * 用户登录、注册命令
+ * 管理员管理用户命令
  * <p>
  * Create at 2023/02/20 17:46
  *
@@ -27,8 +32,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Tag(name = CustomerServiceRestConst.API_TAG_USER_CMD)
 public interface UserCmdRestApi {
     String USER_REGISTER = CustomerServiceRestConst.USER_ROOT + "/register";
-
     String USER_LOGIN = CustomerServiceRestConst.USER_ROOT + "/login";
+    String USER_DELETE = CustomerServiceRestConst.USER_ROOT + "/delete";
+    String USER_UPDATE = CustomerServiceRestConst.USER_ROOT + "/update";
 
     /**
      * 用户注册
@@ -48,10 +54,31 @@ public interface UserCmdRestApi {
      * @return Result<UserInfoResp>
      */
     @Operation(summary = "用户登录", security = {@SecurityRequirement(name = "Authorization")})
-//    @Parameter(name = "token", in = ParameterIn.HEADER, required = true, description = "认证token", example = "Bearer ") 测试swagger测试时传入header带token
     @ResponseBody
     @PostMapping(USER_LOGIN)
     Result<UserInfoResp> userLogin(@Valid @RequestBody UserLoginCmd userLoginCmd);
 
+    /**
+     * 根据id删除对应用户
+     *
+     * @param id 用户id
+     * @return NoDataResult
+     */
+    @Parameter(name = "token", in = ParameterIn.HEADER, required = true, description = "认证token", example = CustomerServiceRestConst.EXAMPLE_TOKEN)
+    @Operation(summary = "根据id删除用户")
+    @ResponseBody
+    @PostMapping(USER_DELETE)
+    NoDataResult deleteUserById(@RequestParam("id") String id);
 
+    /**
+     * 根据id修改用户信息
+     *
+     * @param userUpdateCmd UserUpdateCmd
+     * @return NoDataResult
+     */
+    @Parameter(name = "token", in = ParameterIn.HEADER, required = true, description = "认证token", example = CustomerServiceRestConst.EXAMPLE_TOKEN)
+    @Operation(summary = "根据id修改用户")
+    @ResponseBody
+    @PostMapping(USER_UPDATE)
+    NoDataResult updateUserById(@RequestBody UserUpdateCmd userUpdateCmd);
 }
