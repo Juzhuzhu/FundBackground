@@ -46,5 +46,10 @@ public final class CustomerServiceRestConst {
 
     public static final String API_TAG_FUND_QUERY = API_TAG_FUND + ABOUT_QUERY;
 
+    /**
+     * 基金Cmd模块
+     */
+    public static final String API_TAG_FUND_CMD = API_TAG_FUND + ABOUT_CMD;
+
 
 }

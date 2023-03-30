@@ -2,6 +2,7 @@ package com.fund.service;
 
 import com.fund.dto.cmd.UserLoginCmd;
 import com.fund.dto.cmd.UserRegisterCmd;
+import com.fund.dto.cmd.UserUpdateCmd;
 import com.fund.enumeration.CustomerServiceRestConst;
 import com.fund.exception.BizException;
 import com.fund.gateway.UserCmdRepo;
@@ -16,6 +17,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
@@ -59,6 +61,11 @@ public class UserCmdService {
     @Transactional(rollbackFor = Exception.class)
     public void userRegister(@Valid UserRegisterCmd cmd) {
         Preconditions.checkNotNull(cmd, "注册传入参数为空");
+        if (StringUtils.isBlank(cmd.getPassword())) {
+            //手动新增用户未输入密码时，初始密码123456
+            String defaultPassword = "123456";
+            cmd.setPassword(defaultPassword);
+        }
         //校验是否已存在用户
         if (!userCmdRepo.getUserByNum(cmd.getPhoneNumber())) {
             throw new BizException(PHONE_NUM_EXIST.getMessage(), PHONE_NUM_EXIST.getCode());
@@ -131,6 +138,18 @@ public class UserCmdService {
         userCmdRepo.delectAccountByUserId(id);
         //再根据id主键删除user
         userCmdRepo.deleteUserById(id);
+    }
+
+    /**
+     * 根据id修改用户信息
+     *
+     * @param userUpdateCmd UserUpdateCmd
+     */
+    public void updateUserById(UserUpdateCmd userUpdateCmd) {
+        Preconditions.checkNotNull(userUpdateCmd.getId(), "传入id为空");
+        if (!userCmdRepo.updateUserById(userUpdateCmd)) {
+            throw new BizException(UPDATE_USER_ERROR.getMessage(), UPDATE_USER_ERROR.getCode());
+        }
     }
 
     @Getter

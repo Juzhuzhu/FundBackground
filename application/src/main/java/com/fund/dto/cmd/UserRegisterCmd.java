@@ -29,7 +29,6 @@ public class UserRegisterCmd {
     @Schema(title = "手机号码")
     private String phoneNumber;
 
-    @NotBlank(message = "传入的密码不允许为空")
     @Schema(title = "密码")
     private String password;
 }

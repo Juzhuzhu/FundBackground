@@ -3,6 +3,7 @@ package com.fund.infras.repo.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.fund.dto.cmd.UserUpdateCmd;
 import com.fund.exception.BizException;
 import com.fund.gateway.UserCmdRepo;
 import com.fund.infras.dao.model.FundAccountPO;
@@ -102,6 +103,12 @@ public class UserCmdRepoImpl implements UserCmdRepo {
         }
     }
 
+    @Override
+    public Boolean updateUserById(UserUpdateCmd userUpdateCmd) {
+        FundUserPO po = MAPPER.updateCmdtoUserPo(userUpdateCmd);
+        return userPersist.updateById(po);
+    }
+
 
     @org.mapstruct.Mapper
     interface Mapper {
@@ -138,5 +145,20 @@ public class UserCmdRepoImpl implements UserCmdRepo {
          * @return UserInfoResp
          */
         UserInfoResp toResp(FundUserPO po);
+
+        /**
+         * 将传入的修改对象转换成FundUserPO
+         *
+         * @param cmd UserUpdateCmd
+         * @return FundUserPO
+         */
+        @Mapping(target = "utcUpdated", ignore = true)
+        @Mapping(target = "utcDeleted", ignore = true)
+        @Mapping(target = "utcCreate", ignore = true)
+        @Mapping(target = "token", ignore = true)
+        @Mapping(target = "state", ignore = true)
+        @Mapping(target = "password", ignore = true)
+        @Mapping(target = "headImgUrl", ignore = true)
+        FundUserPO updateCmdtoUserPo(UserUpdateCmd cmd);
     }
 }

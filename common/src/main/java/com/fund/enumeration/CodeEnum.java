@@ -22,7 +22,8 @@ public enum CodeEnum {
     PHONE_NUM_EXIST(5005, "该手机号码已注册！"),
     FUND_CODE_NULL(5006, "基金代码为空"),
     FUND_CODE_DIFF(5007, "同一个页面请求的基金代码不一致"),
-    DATA_SIZE_DIFF(5008,"X轴和Y轴数据量不一致");
+    DATA_SIZE_DIFF(5008,"X轴和Y轴数据量不一致"),
+    UPDATE_USER_ERROR(5009, "用户更新失败");
 
     /**
      * 状态码

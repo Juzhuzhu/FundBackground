@@ -35,6 +35,7 @@ public interface UserCmdRestApi {
     String USER_LOGIN = CustomerServiceRestConst.USER_ROOT + "/login";
     String USER_DELETE = CustomerServiceRestConst.USER_ROOT + "/delete";
     String USER_UPDATE = CustomerServiceRestConst.USER_ROOT + "/update";
+    String USER_ADD = CustomerServiceRestConst.USER_ROOT + "/add";
 
     /**
      * 用户注册
@@ -81,4 +82,16 @@ public interface UserCmdRestApi {
     @ResponseBody
     @PostMapping(USER_UPDATE)
     NoDataResult updateUserById(@RequestBody UserUpdateCmd userUpdateCmd);
+
+    /**
+     * 手动添加新用户
+     *
+     * @param userRegisterCmd UserLoginCmd
+     * @return NoDataResult
+     */
+    @Parameter(name = "token", in = ParameterIn.HEADER, required = true, description = "认证token", example = CustomerServiceRestConst.EXAMPLE_TOKEN)
+    @Operation(summary = "手动增加新用户", description = "默认密码123456")
+    @ResponseBody
+    @PostMapping(USER_ADD)
+    NoDataResult addUser(@Valid @RequestBody UserRegisterCmd userRegisterCmd);
 }

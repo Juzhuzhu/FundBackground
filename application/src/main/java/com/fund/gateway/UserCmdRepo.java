@@ -1,5 +1,6 @@
 package com.fund.gateway;
 
+import com.fund.dto.cmd.UserUpdateCmd;
 import com.fund.service.UserCmdService;
 import com.fund.vo.UserInfoResp;
 
@@ -76,4 +77,11 @@ public interface UserCmdRepo {
      * @param id 主键id
      */
     void deleteUserById(String id);
+
+    /**
+     * 根据主键id修改用户信息
+     *
+     * @param userUpdateCmd UserUpdateCmd
+     */
+    Boolean updateUserById(UserUpdateCmd userUpdateCmd);
 }

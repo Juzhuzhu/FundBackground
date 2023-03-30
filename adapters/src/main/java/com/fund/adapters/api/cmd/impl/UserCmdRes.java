@@ -52,7 +52,14 @@ public class UserCmdRes implements UserCmdRestApi {
     }
 
     @Override
-    public NoDataResult updateUserById(UserUpdateCmd userUpdateCmd) {
-        return null;
+    public NoDataResult updateUserById(@RequestBody UserUpdateCmd userUpdateCmd) {
+        userCmdService.updateUserById(userUpdateCmd);
+        return NoDataResult.success();
+    }
+
+    @Override
+    public NoDataResult addUser(@Valid @RequestBody UserRegisterCmd userRegisterCmd) {
+        userCmdService.userRegister(userRegisterCmd);
+        return NoDataResult.success();
     }
 }
