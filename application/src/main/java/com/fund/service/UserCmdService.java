@@ -26,6 +26,7 @@ import org.springframework.validation.annotation.Validated;
 
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import static com.fund.enumeration.CodeEnum.*;
 
@@ -66,6 +67,8 @@ public class UserCmdService {
             String defaultPassword = "123456";
             cmd.setPassword(defaultPassword);
         }
+        //校验密码和确认密码是否一致
+        Preconditions.checkArgument(Objects.equals(cmd.getPassword(), cmd.getConfirmPassword()), "密码和确认密码不一致");
         //校验是否已存在用户
         if (!userCmdRepo.getUserByNum(cmd.getPhoneNumber())) {
             throw new BizException(PHONE_NUM_EXIST.getMessage(), PHONE_NUM_EXIST.getCode());
@@ -147,7 +150,7 @@ public class UserCmdService {
      */
     public void updateUserById(UserUpdateCmd userUpdateCmd) {
         Preconditions.checkNotNull(userUpdateCmd.getId(), "传入id为空");
-        if (!userCmdRepo.updateUserById(userUpdateCmd)) {
+        if (Boolean.FALSE.equals(userCmdRepo.updateUserById(userUpdateCmd))) {
             throw new BizException(UPDATE_USER_ERROR.getMessage(), UPDATE_USER_ERROR.getCode());
         }
     }
