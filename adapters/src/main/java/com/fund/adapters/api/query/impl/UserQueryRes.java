@@ -1,8 +1,6 @@
 package com.fund.adapters.api.query.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fund.adapters.api.query.UserQueryRestApi;
 import com.fund.enumeration.UserStateEnum;
@@ -39,9 +37,9 @@ public class UserQueryRes implements UserQueryRestApi {
 
     @Override
     public Result<IPage<UserResp>> getUserList(@RequestBody UserQry userQry) {
-        LambdaQueryWrapper<FundUserPO> wrapper = Wrappers.lambdaQuery();
         Page<FundUserPO> page = new Page<>(userQry.getPageNumber(), userQry.getPageSize());
-        IPage<FundUserPO> userPoPage = userMapper.selectUserByPage(page, wrapper);
+        IPage<FundUserPO> userPoPage = userMapper.selectUserByPage(page, userQry);
+
         IPage<UserResp> respPage = userPoPage.convert(userPo -> {
             UserResp userResp = MAPPER.toResp(userPo);
             //设置状态

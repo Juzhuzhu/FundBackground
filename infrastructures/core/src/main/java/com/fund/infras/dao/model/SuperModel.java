@@ -23,7 +23,7 @@ public abstract class SuperModel<T extends SuperModel<?>> {
     private LocalDateTime utcUpdated;
     @TableLogic("0")
     @TableField(fill = FieldFill.UPDATE)
-    private Long utcDeleted;
+    private Integer utcDeleted;
 
     public SuperModel() {
     }
@@ -52,11 +52,11 @@ public abstract class SuperModel<T extends SuperModel<?>> {
         this.utcUpdated = utcUpdated;
     }
 
-    public Long getUtcDeleted() {
+    public Integer getUtcDeleted() {
         return utcDeleted;
     }
 
-    public void setUtcDeleted(Long utcDeleted) {
+    public void setUtcDeleted(Integer utcDeleted) {
         this.utcDeleted = utcDeleted;
     }
 

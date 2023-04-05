@@ -58,7 +58,7 @@ public interface FundQueryRestApi {
     Result<IPage<FundHistoryResp>> fundHistorySearch(@Valid @RequestBody FundHistoryQry fundHistoryQry);
 
     /**
-     *查询该基金所有净值
+     * 查询该基金所有净值Echarts
      *
      * @param fundCode 基金代码
      * @return Result<FundEchartsResp>

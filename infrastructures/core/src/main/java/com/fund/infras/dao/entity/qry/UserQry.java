@@ -20,4 +20,6 @@ import lombok.ToString;
 @Getter
 @ToString
 public class UserQry extends PageRequest {
+    @Schema(title = "用户名")
+    private String name;
 }
