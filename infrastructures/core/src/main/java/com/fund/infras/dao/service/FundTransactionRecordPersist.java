@@ -1,7 +1,7 @@
 package com.fund.infras.dao.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.fund.infras.dao.model.FundTransactionPO;
+import com.fund.infras.dao.model.FundTransactionRecordPO;
 
 /**
  * 内容
@@ -12,5 +12,5 @@ import com.fund.infras.dao.model.FundTransactionPO;
  * @version 1.0.0, 2023/04/05
  * @since 1.0.0
  */
-public interface FundTransactionPersist extends IService<FundTransactionPO> {
+public interface FundTransactionRecordPersist extends IService<FundTransactionRecordPO> {
 }

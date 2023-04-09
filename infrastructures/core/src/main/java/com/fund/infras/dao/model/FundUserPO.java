@@ -5,6 +5,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 /**
  * 用户表
  * <p>
@@ -50,4 +52,9 @@ public class FundUserPO extends SuperModel<FundUserPO> {
      * token，登录时动态生成
      */
     private String token;
+
+    /**
+     * 用户余额
+     */
+    private BigDecimal amount;
 }

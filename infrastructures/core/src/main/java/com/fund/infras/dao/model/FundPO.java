@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,34 +28,54 @@ import java.util.Date;
 public class FundPO {
     public static final String TABLE_NAME = "fund_list";
 
-    @Schema(title = "基金id-主键")
+    /**
+     * 基金id-主键
+     */
     private Integer id;
 
-    @Schema(title = "基金代码")
+    /**
+     * 基金代码
+     */
     private String fundCode;
 
-    @Schema(title = "基金名称")
+    /**
+     * 基金名称
+     */
     private String fundName;
 
-    @Schema(title = "单位净值")
+    /**
+     * 单位净值
+     */
     private BigDecimal fundNav;
 
-    @Schema(title = "累计净值")
+    /**
+     * 累计净值
+     */
     private BigDecimal fundAccnav;
 
-    @Schema(title = "基金日期")
+    /**
+     * 基金日期
+     */
     private Date fundDate;
 
-    @Schema(title = "日增长率")
+    /**
+     * 日增长率
+     */
     private String fundDgr;
 
-    @Schema(title = "申购状态")
+    /**
+     * 申购状态
+     */
     private String subsribeState;
 
-    @Schema(title = "赎回状态")
+    /**
+     * 赎回状态
+     */
     private String redeemState;
 
-    @Schema(title = "基金手续费")
+    /**
+     * 基金手续费
+     */
     private String fundFee;
 
     @TableField(fill = FieldFill.INSERT)

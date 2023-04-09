@@ -6,9 +6,10 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
- * 基金交易表po
+ * 基金交易记录表po
  * <p>
  * Create at 2023/04/05 23:13
  *
@@ -16,12 +17,12 @@ import java.math.BigDecimal;
  * @version 1.0.0, 2023/04/05
  * @since 1.0.0
  */
-@TableName(FundTransactionPO.TABLE_NAME)
+@TableName(FundTransactionRecordPO.TABLE_NAME)
 @Setter
 @Getter
 @EqualsAndHashCode(callSuper = true)
-public class FundTransactionPO extends SuperModel<FundTransactionPO> {
-    public static final String TABLE_NAME = "fund_transaction";
+public class FundTransactionRecordPO extends SuperModel<FundTransactionRecordPO> {
+    public static final String TABLE_NAME = "fund_transaction_record";
     /**
      * 用户id
      */
@@ -30,7 +31,12 @@ public class FundTransactionPO extends SuperModel<FundTransactionPO> {
     /**
      * 基金id
      */
-    private String fundId;
+    private Integer fundId;
+
+    /**
+     * 基金日期
+     */
+    private Date fundDate;
 
     /**
      * 交易类型，0=购入，1=赎回

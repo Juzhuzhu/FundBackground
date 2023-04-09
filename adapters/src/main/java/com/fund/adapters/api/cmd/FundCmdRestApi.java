@@ -1,5 +1,6 @@
 package com.fund.adapters.api.cmd;
 
+import com.fund.dto.cmd.FundPurchaseCmd;
 import com.fund.enumeration.CustomerServiceRestConst;
 import com.fund.utils.NoDataResult;
 import io.swagger.v3.oas.annotations.Operation;
@@ -7,7 +8,9 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
@@ -24,17 +27,20 @@ public interface FundCmdRestApi {
     String FUND_ADD = CustomerServiceRestConst.FUND_ROOT + "/add";
     String FUND_UPDATE = CustomerServiceRestConst.FUND_ROOT + "/update";
     String FUND_DELETE = CustomerServiceRestConst.FUND_ROOT + "/delete";
-    String FUND_TRANSACTION = CustomerServiceRestConst.FUND_ROOT + "/transaction";
+    String FUND_PURCHASE = CustomerServiceRestConst.FUND_ROOT + "/purchase";
 
     /**
      * 基金交易模块
      *
-     * @param request HttpServletRequest
+     * @param request 获取请求头token
+     * @param cmd 买入参数
      * @return NoDataResult
      */
     @Parameter(name = "token", in = ParameterIn.HEADER, required = true, description = "认证token", example = CustomerServiceRestConst.EXAMPLE_TOKEN)
-    @Operation(summary = "用户基金交易")
+    @Operation(summary = "用户基金交易-购买基金")
     @ResponseBody
-    @PostMapping(FUND_TRANSACTION)
-    NoDataResult fundTransaction(HttpServletRequest request);
+    @PostMapping(FUND_PURCHASE)
+    NoDataResult fundPurchase(HttpServletRequest request, @Valid @RequestBody FundPurchaseCmd cmd);
+
+
 }

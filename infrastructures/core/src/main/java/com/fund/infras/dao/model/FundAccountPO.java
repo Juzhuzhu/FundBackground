@@ -34,6 +34,6 @@ public class FundAccountPO extends SuperModel<FundAccountPO> {
     /**
      * 账号类别：0=普通账号，1=管理员账号
      */
-    private int category;
+    private Integer category;
 
 }
