@@ -48,4 +48,20 @@ public interface FundCmdRepo {
     void saveUserBalance(String userId, FundPurchaseCmd cmd);
 
 
+    /**
+     * 根据基金获取基金收益，并更新售出状态
+     *
+     * @param id 持有基金id
+     * @return 收益与基金id
+     */
+    FundCmdService.EarningsInfo getUserEarnings(String id);
+
+    /**
+     * 保存一条售出基金记录
+     *
+     * @param userId 用户id
+     * @param fundId 基金id
+     * @param balance 售出金额
+     */
+    void saveTransactionRecordForSale(String userId, Integer fundId, BigDecimal balance);
 }

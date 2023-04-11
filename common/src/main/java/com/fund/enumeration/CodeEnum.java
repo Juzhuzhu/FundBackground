@@ -24,7 +24,11 @@ public enum CodeEnum {
     FUND_CODE_DIFF(5007, "同一个页面请求的基金代码不一致"),
     DATA_SIZE_DIFF(5008, "X轴和Y轴数据量不一致"),
     UPDATE_USER_ERROR(5009, "用户更新失败"),
-    USER_AMOUNT_LACK(5010, "用户余额不足");
+    USER_AMOUNT_LACK(5010, "用户余额不足"),
+    UPDATE_AMOUNT_ERROR(5011, "更新余额失败"),
+    SAVE_RECORD_ERROR(5012, "保存交易记录失败"),
+    SAVE_BALANCE_ERROR(5013, "保存用户持有基金失败"),
+    UPDATE_BALANCE_ERROR(5014, "更新用户持有基金失败");
 
     /**
      * 状态码

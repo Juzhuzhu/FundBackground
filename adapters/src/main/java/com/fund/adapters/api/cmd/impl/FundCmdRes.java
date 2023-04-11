@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * 内容
@@ -31,9 +32,13 @@ public class FundCmdRes implements FundCmdRestApi {
 
     @Override
     public NoDataResult fundPurchase(HttpServletRequest request, @Valid @RequestBody FundPurchaseCmd cmd) {
-        System.out.println("用户token是：：：" + request.getHeader("token"));
-        //对应用户购买基金
         fundCmdService.purchase(request.getHeader("token"), cmd);
+        return NoDataResult.success();
+    }
+
+    @Override
+    public NoDataResult fundSale(HttpServletRequest request,@RequestParam String id) {
+        fundCmdService.sale(request.getHeader("token"), id);
         return NoDataResult.success();
     }
 }

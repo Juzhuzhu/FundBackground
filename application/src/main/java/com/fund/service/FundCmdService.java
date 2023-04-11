@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -50,7 +51,7 @@ public class FundCmdService {
         //获取用户信息，用户id，余额
         UserInfo userInfo = repo.getUserInfo(token);
         //比较余额是否小于购买基金金额-小于直接抛出异常结束
-        if (cmd.getPurchaseAmount().compareTo(userInfo.getAmount()) < 0) {
+        if (userInfo.getAmount().compareTo(cmd.getPurchaseAmount()) < 0) {
             throw new BizException(USER_AMOUNT_LACK.getMessage(), USER_AMOUNT_LACK.getCode());
         }
         //计算用户余额
@@ -60,6 +61,29 @@ public class FundCmdService {
         repo.saveTransactionRecord(userInfo.getUserId(), cmd);
         //增加用户基金持有
         repo.saveUserBalance(userInfo.getUserId(), cmd);
+    }
+
+    /**
+     * 用户售出对应持有基金
+     *
+     * @param token 用户令牌
+     * @param id    主键id
+     */
+    public void sale(String token, String id) {
+        //校验token
+        JwtUtils.checkToken(token);
+        //获取用户信息，用户id，余额
+        UserInfo userInfo = repo.getUserInfo(token);
+        if (StringUtils.isBlank(id)) {
+            throw new IllegalArgumentException("传入持有基金id为空");
+        }
+        //根据持有基金获取收益与对应基金id并更新售出状态为已售出
+        EarningsInfo earningsInfo = repo.getUserEarnings(id);
+        //计算用户余额+收益更新用户信息
+        BigDecimal userAmount = userInfo.getAmount().add(earningsInfo.getBalance());
+        repo.updateUserAmount(userInfo.getUserId(), userAmount);
+        //生成一条售出基金记录
+        repo.saveTransactionRecordForSale(userInfo.getUserId(), earningsInfo.getFundId(), earningsInfo.getBalance());
     }
 
     @Getter
@@ -75,6 +99,21 @@ public class FundCmdService {
          * 用户余额
          */
         private BigDecimal amount;
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    @EqualsAndHashCode
+    public static class EarningsInfo {
+        /**
+         * 基金id
+         */
+        private Integer fundId;
+        /**
+         * 持有基金目前余额
+         */
+        private BigDecimal balance;
     }
 
 }

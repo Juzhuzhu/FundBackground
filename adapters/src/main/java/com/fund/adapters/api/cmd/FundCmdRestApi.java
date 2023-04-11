@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
@@ -28,6 +29,7 @@ public interface FundCmdRestApi {
     String FUND_UPDATE = CustomerServiceRestConst.FUND_ROOT + "/update";
     String FUND_DELETE = CustomerServiceRestConst.FUND_ROOT + "/delete";
     String FUND_PURCHASE = CustomerServiceRestConst.FUND_ROOT + "/purchase";
+    String FUND_SALE = CustomerServiceRestConst.FUND_ROOT + "/sale";
 
     /**
      * 基金交易模块
@@ -42,5 +44,17 @@ public interface FundCmdRestApi {
     @PostMapping(FUND_PURCHASE)
     NoDataResult fundPurchase(HttpServletRequest request, @Valid @RequestBody FundPurchaseCmd cmd);
 
+    /**
+     * 用户基金交易-售出持有基金
+     *
+     * @param request HttpServletRequest
+     * @param id 持有基金id
+     * @return NoDataResult
+     */
+    @Parameter(name = "token", in = ParameterIn.HEADER, required = true, description = "认证token", example = CustomerServiceRestConst.EXAMPLE_TOKEN)
+    @Operation(summary = "用户基金交易-售出持有基金")
+    @ResponseBody
+    @PostMapping(FUND_SALE)
+    NoDataResult fundSale(HttpServletRequest request, @RequestParam String id);
 
 }
