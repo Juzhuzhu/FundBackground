@@ -5,11 +5,14 @@ import com.fund.entity.qry.FundHistoryQry;
 import com.fund.entity.qry.FundListQry;
 import com.fund.entity.resp.FundEchartsResp;
 import com.fund.entity.resp.FundHistoryResp;
+import com.fund.entity.resp.FundOwnResp;
 import com.fund.entity.resp.FundResp;
 import com.fund.enumeration.CustomerServiceRestConst;
+import com.fund.utils.PageRequest;
 import com.fund.utils.Result;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,6 +37,8 @@ public interface FundQueryRestApi {
     String FUND_HISTORY = CustomerServiceRestConst.FUND_ROOT + "/history";
 
     String FUND_ECHARTS = CustomerServiceRestConst.FUND_ROOT + "/echarts";
+
+    String FUND_OWN = CustomerServiceRestConst.FUND_ROOT + "/own";
 
     /**
      * 分页查询基金列表
@@ -67,4 +72,17 @@ public interface FundQueryRestApi {
     @ResponseBody
     @PostMapping(FUND_ECHARTS)
     Result<FundEchartsResp> fundEcharts(@RequestParam("fundCode") String fundCode);
+
+
+    /**
+     * 用户查询自己持有的基金
+     *
+     * @param request     HttpServletRequest
+     * @param pageRequest PageRequest
+     * @return Result<IPage < FundOwnResp>>
+     */
+    @Operation(summary = "分页查询用户持有基金")
+    @ResponseBody
+    @PostMapping(FUND_OWN)
+    Result<IPage<FundOwnResp>> fundOwnSearch(HttpServletRequest request, @RequestBody PageRequest pageRequest);
 }

@@ -9,16 +9,23 @@ import com.fund.entity.qry.FundHistoryQry;
 import com.fund.entity.qry.FundListQry;
 import com.fund.entity.resp.FundEchartsResp;
 import com.fund.entity.resp.FundHistoryResp;
+import com.fund.entity.resp.FundOwnResp;
 import com.fund.entity.resp.FundResp;
 import com.fund.exception.BizException;
 import com.fund.infras.dao.model.FundHistoryPO;
 import com.fund.infras.dao.model.FundPO;
+import com.fund.infras.dao.model.FundUserBalancePO;
+import com.fund.infras.dao.model.FundUserPO;
 import com.fund.infras.dao.service.FundHistoryPersist;
 import com.fund.infras.dao.service.FundPersist;
+import com.fund.infras.dao.service.FundUserBalancePersist;
+import com.fund.utils.JwtUtils;
+import com.fund.utils.PageRequest;
 import com.fund.utils.RequestDynamicTableNameHelper;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
+import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Repository;
 
@@ -46,11 +53,20 @@ public class FundQueryRepoImpl {
 
     private final FundHistoryPersist fundHistoryPersist;
 
+    private final FundUserBalancePersist fundUserBalancePersist;
+
+    private final UserQueryRepoImpl userQueryRepo;
+
     private static final HashMap<String, FundEchartsResp> FUND_ECHARTS_RESP_HASH_MAP = Maps.newHashMap();
 
-    public FundQueryRepoImpl(FundPersist fundPersist, FundHistoryPersist fundHistoryPersist) {
+    public FundQueryRepoImpl(FundPersist fundPersist,
+                             FundHistoryPersist fundHistoryPersist,
+                             FundUserBalancePersist fundUserBalancePersist,
+                             UserQueryRepoImpl userQueryRepo) {
         this.fundPersist = fundPersist;
         this.fundHistoryPersist = fundHistoryPersist;
+        this.fundUserBalancePersist = fundUserBalancePersist;
+        this.userQueryRepo = userQueryRepo;
     }
 
     /**
@@ -136,6 +152,33 @@ public class FundQueryRepoImpl {
         return resp;
     }
 
+    /**
+     * 用户查询自己持有基金
+     *
+     * @param token       令牌
+     * @param pageRequest 分页条件
+     * @return IPage<FundOwnResp>
+     */
+    public IPage<FundOwnResp> fundOwnSearch(String token, PageRequest pageRequest) {
+        JwtUtils.checkToken(token);
+        //根据token获取当前用户id
+        FundUserPO userByToken = userQueryRepo.getUserByToken(token);
+        //根据用户id 和 soldStatus==0为条件分页查询
+        Page<FundUserBalancePO> page = new Page<>(pageRequest.getPageNumber(), pageRequest.getPageSize());
+        LambdaQueryWrapper<FundUserBalancePO> wrapper = Wrappers.lambdaQuery();
+        wrapper.eq(FundUserBalancePO::getUserId, userByToken.getId())
+                .eq(FundUserBalancePO::getSoldStatus, 0);
+        IPage<FundUserBalancePO> fundUserBalancePoPage = fundUserBalancePersist.page(page, wrapper);
+        //转换对象
+        return fundUserBalancePoPage.convert(po -> {
+            FundOwnResp resp = MAPPER.toOwnResp(po);
+            FundPO fundPo = fundPersist.getById(po.getFundId());
+            resp.setFundCode(fundPo.getFundCode());
+            resp.setFundName(fundPo.getFundName());
+            return resp;
+        });
+    }
+
     @org.mapstruct.Mapper
     interface Mapper {
 
@@ -156,5 +199,15 @@ public class FundQueryRepoImpl {
          * @return FundHistoryResp
          */
         FundHistoryResp toHisResp(FundHistoryPO po);
+
+        /**
+         * FundUserBalancePO -》 FundOwnResp
+         *
+         * @param po FundUserBalancePO
+         * @return FundOwnResp
+         */
+        @Mapping(target = "fundName", ignore = true)
+        @Mapping(target = "fundCode", ignore = true)
+        FundOwnResp toOwnResp(FundUserBalancePO po);
     }
 }

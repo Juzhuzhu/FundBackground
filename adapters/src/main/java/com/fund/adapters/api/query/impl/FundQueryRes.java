@@ -6,9 +6,12 @@ import com.fund.entity.qry.FundHistoryQry;
 import com.fund.entity.qry.FundListQry;
 import com.fund.entity.resp.FundEchartsResp;
 import com.fund.entity.resp.FundHistoryResp;
+import com.fund.entity.resp.FundOwnResp;
 import com.fund.entity.resp.FundResp;
 import com.fund.repo.FundQueryRepoImpl;
+import com.fund.utils.PageRequest;
 import com.fund.utils.Result;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -48,6 +51,13 @@ public class FundQueryRes implements FundQueryRestApi {
     @Override
     public Result<FundEchartsResp> fundEcharts(@RequestParam("fundCode") String fundCode) {
         FundEchartsResp resp = repo.fundEcharts(fundCode);
+        return Result.ok(resp);
+    }
+
+    @Override
+    public Result<IPage<FundOwnResp>> fundOwnSearch(HttpServletRequest request, @RequestBody PageRequest pageRequest) {
+        String token = request.getHeader("token");
+        IPage<FundOwnResp> resp = repo.fundOwnSearch(token, pageRequest);
         return Result.ok(resp);
     }
 }
