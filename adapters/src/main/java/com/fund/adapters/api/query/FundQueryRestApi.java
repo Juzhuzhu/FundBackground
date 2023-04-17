@@ -11,6 +11,8 @@ import com.fund.enumeration.CustomerServiceRestConst;
 import com.fund.utils.PageRequest;
 import com.fund.utils.Result;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -81,6 +83,7 @@ public interface FundQueryRestApi {
      * @param pageRequest PageRequest
      * @return Result<IPage < FundOwnResp>>
      */
+    @Parameter(name = "token", in = ParameterIn.HEADER, required = true, description = "认证token", example = CustomerServiceRestConst.EXAMPLE_TOKEN)
     @Operation(summary = "分页查询用户持有基金")
     @ResponseBody
     @PostMapping(FUND_OWN)
