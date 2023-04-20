@@ -1,5 +1,6 @@
 package com.fund.entity.resp;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
@@ -44,6 +45,7 @@ public class FundOwnResp {
     /**
      * 基金日期
      */
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     @Schema(title = "基金日期")
     private Date fundDate;
 

@@ -7,18 +7,14 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fund.entity.qry.FundHistoryQry;
 import com.fund.entity.qry.FundListQry;
-import com.fund.entity.resp.FundEchartsResp;
-import com.fund.entity.resp.FundHistoryResp;
-import com.fund.entity.resp.FundOwnResp;
-import com.fund.entity.resp.FundResp;
+import com.fund.entity.resp.*;
 import com.fund.exception.BizException;
-import com.fund.infras.dao.model.FundHistoryPO;
-import com.fund.infras.dao.model.FundPO;
-import com.fund.infras.dao.model.FundUserBalancePO;
-import com.fund.infras.dao.model.FundUserPO;
+import com.fund.infras.dao.model.*;
 import com.fund.infras.dao.service.FundHistoryPersist;
 import com.fund.infras.dao.service.FundPersist;
+import com.fund.infras.dao.service.FundTransactionRecordPersist;
 import com.fund.infras.dao.service.FundUserBalancePersist;
+import com.fund.utils.DateUtils;
 import com.fund.utils.JwtUtils;
 import com.fund.utils.PageRequest;
 import com.fund.utils.RequestDynamicTableNameHelper;
@@ -30,6 +26,8 @@ import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Repository;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.*;
 
 import static com.fund.enumeration.CodeEnum.*;
@@ -57,16 +55,20 @@ public class FundQueryRepoImpl {
 
     private final UserQueryRepoImpl userQueryRepo;
 
+    private final FundTransactionRecordPersist fundTransactionRecordPersist;
+
     private static final HashMap<String, FundEchartsResp> FUND_ECHARTS_RESP_HASH_MAP = Maps.newHashMap();
 
     public FundQueryRepoImpl(FundPersist fundPersist,
                              FundHistoryPersist fundHistoryPersist,
                              FundUserBalancePersist fundUserBalancePersist,
-                             UserQueryRepoImpl userQueryRepo) {
+                             UserQueryRepoImpl userQueryRepo,
+                             FundTransactionRecordPersist fundTransactionRecordPersist) {
         this.fundPersist = fundPersist;
         this.fundHistoryPersist = fundHistoryPersist;
         this.fundUserBalancePersist = fundUserBalancePersist;
         this.userQueryRepo = userQueryRepo;
+        this.fundTransactionRecordPersist = fundTransactionRecordPersist;
     }
 
     /**
@@ -179,6 +181,36 @@ public class FundQueryRepoImpl {
         });
     }
 
+    /**
+     * 用户分页查询个人的交易记录
+     *
+     * @param token       令牌
+     * @param pageRequest 分页
+     * @return IPage<FundTransactionRecordResp>
+     */
+    public IPage<FundTransactionRecordResp> transactionRecordSearch(String token, PageRequest pageRequest) {
+        JwtUtils.checkToken(token);
+        //根据token获取当前用户id
+        FundUserPO userByToken = userQueryRepo.getUserByToken(token);
+        //组装查询条件
+        Page<FundTransactionRecordPO> page = new Page<>(pageRequest.getPageNumber(), pageRequest.getPageSize());
+        LambdaQueryWrapper<FundTransactionRecordPO> wrapper = Wrappers.lambdaQuery();
+        wrapper.eq(userByToken.getId() != null, FundTransactionRecordPO::getUserId, userByToken.getId())
+                .orderByDesc(SuperModel::getUtcCreate);
+        IPage<FundTransactionRecordPO> poIpage = fundTransactionRecordPersist.page(page, wrapper);
+        return poIpage.convert(po -> {
+            FundPO fundPo = fundPersist.getById(po.getFundId());
+            FundTransactionRecordResp resp = MAPPER.toRecordResp(po);
+            resp.setFundCode(fundPo.getFundCode());
+            resp.setFundName(fundPo.getFundName());
+            resp.setTradeType(po.getTradeType() == 0 ? "购入" : "赎回");
+            LocalDateTime transactionTime = DateUtils.toZone(po.getUtcCreate(), ZoneOffset.UTC, DateUtils.EIGHTH_TIME_ZONE);
+            resp.setTransactionTime(transactionTime);
+            return resp;
+        });
+
+    }
+
     @org.mapstruct.Mapper
     interface Mapper {
 
@@ -209,5 +241,17 @@ public class FundQueryRepoImpl {
         @Mapping(target = "fundName", ignore = true)
         @Mapping(target = "fundCode", ignore = true)
         FundOwnResp toOwnResp(FundUserBalancePO po);
+
+        /**
+         * FundTransactionRecordPO -》 FundTransactionRecordResp
+         *
+         * @param po FundTransactionRecordPO
+         * @return FundTransactionRecordResp
+         */
+        @Mapping(target = "transactionTime", ignore = true)
+        @Mapping(target = "fundName", ignore = true)
+        @Mapping(target = "fundCode", ignore = true)
+        @Mapping(target = "tradeType", ignore = true)
+        FundTransactionRecordResp toRecordResp(FundTransactionRecordPO po);
     }
 }

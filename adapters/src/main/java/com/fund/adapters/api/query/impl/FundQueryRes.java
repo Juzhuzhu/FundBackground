@@ -4,10 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.fund.adapters.api.query.FundQueryRestApi;
 import com.fund.entity.qry.FundHistoryQry;
 import com.fund.entity.qry.FundListQry;
-import com.fund.entity.resp.FundEchartsResp;
-import com.fund.entity.resp.FundHistoryResp;
-import com.fund.entity.resp.FundOwnResp;
-import com.fund.entity.resp.FundResp;
+import com.fund.entity.resp.*;
 import com.fund.repo.FundQueryRepoImpl;
 import com.fund.utils.PageRequest;
 import com.fund.utils.Result;
@@ -58,6 +55,13 @@ public class FundQueryRes implements FundQueryRestApi {
     public Result<IPage<FundOwnResp>> fundOwnSearch(HttpServletRequest request, @RequestBody PageRequest pageRequest) {
         String token = request.getHeader("token");
         IPage<FundOwnResp> resp = repo.fundOwnSearch(token, pageRequest);
+        return Result.ok(resp);
+    }
+
+    @Override
+    public Result<IPage<FundTransactionRecordResp>> transactionRecordSearch(HttpServletRequest request, PageRequest pageRequest) {
+        String token = request.getHeader("token");
+        IPage<FundTransactionRecordResp> resp = repo.transactionRecordSearch(token, pageRequest);
         return Result.ok(resp);
     }
 }

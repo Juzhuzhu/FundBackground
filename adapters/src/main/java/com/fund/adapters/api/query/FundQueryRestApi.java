@@ -3,10 +3,7 @@ package com.fund.adapters.api.query;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.fund.entity.qry.FundHistoryQry;
 import com.fund.entity.qry.FundListQry;
-import com.fund.entity.resp.FundEchartsResp;
-import com.fund.entity.resp.FundHistoryResp;
-import com.fund.entity.resp.FundOwnResp;
-import com.fund.entity.resp.FundResp;
+import com.fund.entity.resp.*;
 import com.fund.enumeration.CustomerServiceRestConst;
 import com.fund.utils.PageRequest;
 import com.fund.utils.Result;
@@ -41,6 +38,8 @@ public interface FundQueryRestApi {
     String FUND_ECHARTS = CustomerServiceRestConst.FUND_ROOT + "/echarts";
 
     String FUND_OWN = CustomerServiceRestConst.FUND_ROOT + "/own";
+
+    String FUND_TRANSACTION_RECORD = CustomerServiceRestConst.FUND_ROOT + "/transaction/record";
 
     /**
      * 分页查询基金列表
@@ -88,4 +87,17 @@ public interface FundQueryRestApi {
     @ResponseBody
     @PostMapping(FUND_OWN)
     Result<IPage<FundOwnResp>> fundOwnSearch(HttpServletRequest request, @RequestBody PageRequest pageRequest);
+
+    /**
+     * 用户查询自己的交易记录
+     *
+     * @param request     HttpServletRequest
+     * @param pageRequest PageRequest
+     * @return Result<IPage < FundOwnResp>>
+     */
+    @Parameter(name = "token", in = ParameterIn.HEADER, required = true, description = "认证token", example = CustomerServiceRestConst.EXAMPLE_TOKEN)
+    @Operation(summary = "用户查询自己的交易记录")
+    @ResponseBody
+    @PostMapping(FUND_TRANSACTION_RECORD)
+    Result<IPage<FundTransactionRecordResp>> transactionRecordSearch(HttpServletRequest request, @RequestBody PageRequest pageRequest);
 }
