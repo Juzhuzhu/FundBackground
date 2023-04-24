@@ -93,6 +93,8 @@ public class FundCmdRepoImpl implements FundCmdRepo {
         //刚买基金余额跟购入金额一致
         po.setBalance(cmd.getPurchaseAmount());
         po.setSoldStatus(0);
+        //刚买最后计算收益的日期与当前基金日期一致
+        po.setLatestDate(po.getFundDate());
         if (Boolean.FALSE.equals(fundUserBalancePersist.save(po))) {
             throw new BizException(SAVE_BALANCE_ERROR.getMessage(), SAVE_BALANCE_ERROR.getCode());
         }

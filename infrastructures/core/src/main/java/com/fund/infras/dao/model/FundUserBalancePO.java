@@ -41,6 +41,11 @@ public class FundUserBalancePO extends SuperModel<FundUserBalancePO>{
     private Date fundDate;
 
     /**
+     * 最后计算收益的日期
+     */
+    private Date latestDate;
+
+    /**
      * 买入金额
      */
     private BigDecimal purchaseAmount;
