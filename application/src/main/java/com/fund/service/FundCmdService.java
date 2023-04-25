@@ -4,7 +4,6 @@ import com.fund.dto.cmd.FundPurchaseCmd;
 import com.fund.exception.BizException;
 import com.fund.gateway.FundCmdRepo;
 import com.fund.utils.JwtUtils;
-import com.google.common.collect.Lists;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,7 +15,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 
+import static com.fund.enumeration.CodeEnum.UPDATE_BALANCE_ERROR;
 import static com.fund.enumeration.CodeEnum.USER_AMOUNT_LACK;
 
 /**
@@ -81,11 +83,17 @@ public class FundCmdService {
         }
         //根据持有基金获取收益与对应基金id并更新售出状态为已售出
         EarningsInfo earningsInfo = repo.getUserEarnings(id);
-        //计算用户余额+收益更新用户信息
-        BigDecimal userAmount = userInfo.getAmount().add(earningsInfo.getBalance());
+        //用户持有该基金的余额
+        BigDecimal balance = earningsInfo.getBalance();
+        //计算手续费
+        BigDecimal fundFee = balance.multiply(BigDecimal.valueOf(0.0015)).setScale(2, BigDecimal.ROUND_HALF_UP);
+        //计算用户余额+最终收益更新用户信息
+        //最终收益=余额-手续费
+        BigDecimal resultEarnings = balance.subtract(fundFee);
+        BigDecimal userAmount = userInfo.getAmount().add(resultEarnings);
         repo.updateUserAmount(userInfo.getUserId(), userAmount);
         //生成一条售出基金记录
-        repo.saveTransactionRecordForSale(userInfo.getUserId(), earningsInfo.getFundId(), earningsInfo.getBalance());
+        repo.saveTransactionRecordForSale(userInfo.getUserId(), earningsInfo.getFundId(), balance);
     }
 
     /**
@@ -93,16 +101,42 @@ public class FundCmdService {
      */
     @Transactional(rollbackFor = Exception.class)
     public void calculateEarnings() {
+        // 罗康明 TODO: 2023/4/25 先保证功能正确，再优化掉过时的BigDecimal乘除方法
         //查询fund_user_balance表，获取所有未售出的集合（包含主键id，用户id，基金id，基金日期，最后计算收益的日期，当前余额）
+        log.warn("———————————————————————获取所有用户持有的基金列表——————————————————————");
+        List<UserBalanceInfo> userBalanceInfoList = repo.getUserBalanceInfoList();
         //遍历集合，计算收益
-        Lists.newArrayList().forEach(i -> {
-            //根据当前基金id到fund_list表查询出当前基金的信息（fund_code,fund_nav,fund_date）
-            //判断用户持有的基金最后计算收益的日期与fund_list当前的基金日期是否一致，一致则continue跳出本次循环开始下一个计算，否则继续进行下一步
-            //根据fund_code拼接动态表名，以大于用户持有的基金日期为条件查询出该基金的信息list->(fund_date,fund_nav)-升序排序
+        userBalanceInfoList.forEach(userBalanceInfo -> {
+            log.warn("当前计算的用户持有主键id为：{}，对应基金id为：{}", userBalanceInfo.getId(), userBalanceInfo.getFundId());
+            //根据当前基金id到fund_list表查询出当前基金的信息（fund_code,fund_date）
+            FundInfo fundInfo = repo.getFundInfo(userBalanceInfo.getFundId());
+            //判断用户持有的基金最后计算收益的日期与fund_list当前的基金日期是否一致，一致则return跳出本次循环开始下一个计算，否则继续进行下一步
+            if (userBalanceInfo.getLatestDate().equals(fundInfo.getFundDate())) {
+                log.warn("当前用户持有收益已是最新值无需更新，主键id：{}，用户id：{}，基金id：{}", userBalanceInfo.getId(), userBalanceInfo.getUserId(), userBalanceInfo.getFundId());
+                return;
+            }
+            //根据fund_code拼接动态表名，以大于用户持有的基金日期为条件查询出该基金的信息list->(fund_date,fund_nav,yesterdayFundNav)-以fund_date升序排序
+            log.warn("前往对应的基金历史净值表查询信息，基金代码：{}", fundInfo.getFundCode());
+            List<FundHisInfo> fundHisInfoList = repo.getFundNavList(fundInfo.getFundCode(), userBalanceInfo.getLatestDate());
             //遍历list，计算用户持有该基金的余额
-            //收益计算公式：收益率 = (最新净值 - 基金成立以来的净值) / 基金成立以来的净值    ----基金成立以来的净值=1
-            //当前余额 = 当前余额*收益率 + 当前余额
-            //计算完毕，更新fund_user_balance，以主键id为条件，更新当前余额，更新最后计算收益的日期为当前基金最新的基金日期
+//            BigDecimal balance = userBalanceInfo.getBalance();
+            fundHisInfoList.forEach(fundHisInfo -> {
+                BigDecimal fundNav = fundHisInfo.getFundNav();
+                BigDecimal yesterdayFundNav = fundHisInfo.getYesterdayFundNav();
+                //收益计算公式：每日收益率  =  （今日基金净值  -  昨日基金净值）/ 昨日基金净值
+                //当日收益率
+                BigDecimal yieldRate = fundNav.subtract(yesterdayFundNav).divide(yesterdayFundNav, 4, BigDecimal.ROUND_HALF_UP);
+                //获取当前余额
+                BigDecimal balance = repo.getBalanceById(userBalanceInfo.getId());
+                //计算最新余额 = 当前余额*收益率 + 当前余额
+                BigDecimal earning = balance.multiply(yieldRate).setScale(2, BigDecimal.ROUND_HALF_UP);
+                BigDecimal resultBalance = balance.add(earning);
+                //计算完毕，更新fund_user_balance，以主键id为条件，更新当前余额，更新最后计算收益的日期为当前基金最新的基金日期
+                if (!repo.updateUserBalance(userBalanceInfo.getId(), resultBalance, fundHisInfo.getFundDate())) {
+                    log.warn("更新一次用户持有收益主键id：{}，用户id：{}，基金id：{}，计算基金日期：{}", userBalanceInfo.getId(), userBalanceInfo.getUserId(), userBalanceInfo.getFundId(), fundInfo.getFundCode());
+                    throw new BizException(UPDATE_BALANCE_ERROR.getMessage(), UPDATE_BALANCE_ERROR.getCode());
+                }
+            });
         });
     }
 
@@ -134,6 +168,78 @@ public class FundCmdService {
          * 持有基金目前余额
          */
         private BigDecimal balance;
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    @EqualsAndHashCode
+    public static class UserBalanceInfo {
+        /**
+         * 主键id
+         */
+        private String id;
+        /**
+         * 用户id
+         */
+        private String userId;
+
+        /**
+         * 基金id
+         */
+        private Integer fundId;
+
+        /**
+         * 基金日期
+         */
+        private Date fundDate;
+
+        /**
+         * 最后计算收益的日期
+         */
+        private Date latestDate;
+        /**
+         * 当前余额
+         */
+//        private BigDecimal balance;
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    @EqualsAndHashCode
+    public static class FundInfo {
+        /**
+         * 基金代码
+         */
+        private String fundCode;
+        /**
+         * 基金日期
+         */
+        private Date fundDate;
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    @EqualsAndHashCode
+    public static class FundHisInfo {
+        /**
+         * 基金代码
+         */
+//        private String fundCode;
+        /**
+         * 单位净值
+         */
+        private BigDecimal fundNav;
+        /**
+         * 昨日单位净值
+         */
+        private BigDecimal yesterdayFundNav;
+        /**
+         * 基金日期
+         */
+        private Date fundDate;
     }
 
 }
