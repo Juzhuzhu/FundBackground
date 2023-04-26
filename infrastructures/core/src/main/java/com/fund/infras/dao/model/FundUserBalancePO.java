@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -21,6 +22,7 @@ import java.util.Date;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
+@ToString
 public class FundUserBalancePO extends SuperModel<FundUserBalancePO>{
 
     public static final String TABLE_NAME = "fund_user_balance";

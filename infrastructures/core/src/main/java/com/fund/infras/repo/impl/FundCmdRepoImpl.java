@@ -8,16 +8,19 @@ import com.fund.gateway.FundCmdRepo;
 import com.fund.infras.dao.model.*;
 import com.fund.infras.dao.service.*;
 import com.fund.service.FundCmdService;
+import com.fund.utils.DateUtils;
 import com.fund.utils.IdGenerator;
 import com.fund.utils.RequestDynamicTableNameHelper;
 import com.google.common.base.Preconditions;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
-import java.util.Calendar;
+import java.time.ZoneOffset;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,6 +38,7 @@ import static com.fund.enumeration.CustomerServiceRestConst.TABLE_NAME_PREFIX;
  * @since 1.0.0
  */
 @Repository
+@Slf4j
 public class FundCmdRepoImpl implements FundCmdRepo {
 
     private static final Mapper MAPPER = Mapper.INSTANCE;
@@ -159,22 +163,41 @@ public class FundCmdRepoImpl implements FundCmdRepo {
             RequestDynamicTableNameHelper.setRequestData(TABLE_NAME_PREFIX + fundCode);
         }
         LambdaQueryWrapper<FundHistoryPO> wrapper = Wrappers.lambdaQuery();
-        wrapper.gt(latestDate != null, FundHistoryPO::getFundDate, latestDate)
+        wrapper.gt(FundHistoryPO::getFundDate, latestDate)
                 .orderByAsc(FundHistoryPO::getFundDate);
         List<FundHistoryPO> poList = fundHistoryPersist.list(wrapper);
-        List<FundCmdService.FundHisInfo> fundHisInfoList = poList.stream().map(MAPPER::toFundHisInfo).collect(Collectors.toList());
-        fundHisInfoList.forEach(fundHisInfo -> {
+        if (poList.size() == 1) {
             RequestDynamicTableNameHelper.setRequestData(TABLE_NAME_PREFIX + fundCode);
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(fundHisInfo.getFundDate());
-            calendar.add(Calendar.DAY_OF_MONTH, -1);
-            Date yesterdayDate = calendar.getTime();
-            LambdaQueryWrapper<FundHistoryPO> yesterdayWrapper = Wrappers.lambdaQuery();
-            yesterdayWrapper.eq(FundHistoryPO::getFundDate, yesterdayDate);
-            FundHistoryPO po = fundHistoryPersist.getOne(yesterdayWrapper);
-            fundHisInfo.setYesterdayFundNav(po.getFundNav());
-        });
-        return fundHisInfoList;
+            LambdaQueryWrapper<FundHistoryPO> wrapper2 = Wrappers.lambdaQuery();
+            wrapper2.orderByDesc(FundHistoryPO::getFundDate)
+                    .last("limit 2");
+            poList = fundHistoryPersist.list(wrapper2);
+            Collections.reverse(poList);
+            List<FundCmdService.FundHisInfo> fundHisInfoList = poList.stream().map(MAPPER::toFundHisInfo).collect(Collectors.toList());
+            setYesterdayFundNav(fundHisInfoList);
+            fundHisInfoList.remove(0);
+            return fundHisInfoList;
+        }
+        List<FundCmdService.FundHisInfo> fundHisInfoList = poList.stream().map(MAPPER::toFundHisInfo).collect(Collectors.toList());
+        setYesterdayFundNav(fundHisInfoList);
+        return fundHisInfoList.parallelStream().filter(fundHisInfo -> !fundHisInfo.getFundDate().equals(latestDate)).collect(Collectors.toList());
+    }
+
+    /**
+     * 赋值昨日单位净值
+     *
+     * @param fundHisInfoList List<FundCmdService.FundHisInfo>
+     */
+    private void setYesterdayFundNav(List<FundCmdService.FundHisInfo> fundHisInfoList) {
+        int size = fundHisInfoList.size();
+        if (size > 0) {
+            BigDecimal yesterdayFundNav = fundHisInfoList.get(0).getFundNav();
+            for (int i = 1; i < size; i++) {
+                FundCmdService.FundHisInfo fundHisInfo = fundHisInfoList.get(i);
+                fundHisInfo.setYesterdayFundNav(yesterdayFundNav);
+                yesterdayFundNav = fundHisInfo.getFundNav();
+            }
+        }
     }
 
     @Override
@@ -189,7 +212,8 @@ public class FundCmdRepoImpl implements FundCmdRepo {
         FundUserBalancePO po = new FundUserBalancePO();
         po.setId(id);
         po.setBalance(resultBalance);
-        po.setLatestDate(fundDate);
+        po.setLatestDate(DateUtils.dateToZone(fundDate, ZoneOffset.UTC, DateUtils.EIGHTH_TIME_ZONE));
+        log.warn("更新用户持有基金余额：{}", po);
         return fundUserBalancePersist.updateById(po);
     }
 
@@ -212,6 +236,7 @@ public class FundCmdRepoImpl implements FundCmdRepo {
          * @param cmd FundPurchaseCmd
          * @return FundUserBalancePO
          */
+        @Mapping(target = "latestDate", ignore = true)
         @Mapping(target = "utcUpdated", ignore = true)
         @Mapping(target = "utcDeleted", ignore = true)
         @Mapping(target = "utcCreate", ignore = true)
