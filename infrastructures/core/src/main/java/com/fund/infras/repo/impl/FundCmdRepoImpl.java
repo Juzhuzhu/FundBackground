@@ -12,6 +12,7 @@ import com.fund.utils.DateUtils;
 import com.fund.utils.IdGenerator;
 import com.fund.utils.RequestDynamicTableNameHelper;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.Mapping;
@@ -100,7 +101,24 @@ public class FundCmdRepoImpl implements FundCmdRepo {
     }
 
     @Override
-    public void saveUserBalance(String userId, FundPurchaseCmd cmd) {
+    public void saveOrUpdateUserBalance(String userId, FundPurchaseCmd cmd) {
+        // 罗康明 TODO: 2023/4/27 修改代码，若用户已持有该基金进行更新，未持有进行保存新增，尚未测试
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(userId), "传入用户id为空");
+        //根据用户id，基金id，未售出为条件判断该用户目前是否持有该基金，持有该基金则进行更新
+        LambdaQueryWrapper<FundUserBalancePO> wrapper = Wrappers.lambdaQuery(new FundUserBalancePO());
+        wrapper.eq(FundUserBalancePO::getUserId, userId)
+                .eq(FundUserBalancePO::getFundId, cmd.getFundId())
+                .eq(FundUserBalancePO::getSoldStatus, 0);
+        FundUserBalancePO judgePo = fundUserBalancePersist.getOne(wrapper);
+        if (judgePo != null) {
+            //更新时，买入金额和持有余额都增加
+            FundUserBalancePO updatePo = new FundUserBalancePO();
+            updatePo.setId(judgePo.getId());
+            updatePo.setPurchaseAmount(judgePo.getPurchaseAmount().add(cmd.getPurchaseAmount()));
+            updatePo.setBalance(judgePo.getBalance().add(cmd.getPurchaseAmount()));
+            fundUserBalancePersist.updateById(updatePo);
+            return;
+        }
         FundUserBalancePO po = MAPPER.toBalancePo(cmd);
         po.setId(String.valueOf(idGenerator.nextId()));
         po.setUserId(userId);

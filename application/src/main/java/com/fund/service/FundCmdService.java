@@ -50,6 +50,7 @@ public class FundCmdService {
      */
     @Transactional(rollbackFor = Exception.class)
     public void purchase(String token, FundPurchaseCmd cmd) {
+        // 罗康明 TODO: 2023/4/27 校验该用户购买的基金是否已经持有，若已持有则增加余额
         //校验token
         JwtUtils.checkToken(token);
         //获取用户信息，用户id，余额
@@ -63,8 +64,8 @@ public class FundCmdService {
         repo.updateUserAmount(userInfo.getUserId(), userAmount);
         //保存交易记录，及目前用户基金持有
         repo.saveTransactionRecord(userInfo.getUserId(), cmd);
-        //增加用户基金持有
-        repo.saveUserBalance(userInfo.getUserId(), cmd);
+        //根据用户id，基金id，未售出为条件判断该用户目前是否持有该基金，持有该基金则进行更新，未持有则新增持有
+        repo.saveOrUpdateUserBalance(userInfo.getUserId(), cmd);
     }
 
     /**

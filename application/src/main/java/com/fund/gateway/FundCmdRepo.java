@@ -47,7 +47,7 @@ public interface FundCmdRepo {
      * @param userId 用户id
      * @param cmd    FundPurchaseCmd
      */
-    void saveUserBalance(String userId, FundPurchaseCmd cmd);
+    void saveOrUpdateUserBalance(String userId, FundPurchaseCmd cmd);
 
 
     /**
