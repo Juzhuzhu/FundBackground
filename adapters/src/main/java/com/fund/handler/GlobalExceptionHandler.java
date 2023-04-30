@@ -41,7 +41,7 @@ public class GlobalExceptionHandler {
         log.warn("异常：" + e.getClass().getName() + "，异常信息：【" + e.getMessage() + "】");
         e.printStackTrace();
 //        return Result.error(errorInfo);
-        return Result.error(SAVE_USER_ERROR.getCode(), "系统异常");
+        return Result.error(SAVE_USER_ERROR.getCode(), e.getMessage());
     }
 
     /**

@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -22,7 +23,7 @@ import java.time.LocalDateTime;
 @Setter
 @Getter
 @ToString
-public class UserResp {
+public class UserResp implements Serializable {
     @Schema(title = "用户id")
     private String id;
 

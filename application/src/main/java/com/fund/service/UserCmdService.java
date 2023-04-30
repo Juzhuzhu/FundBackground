@@ -111,11 +111,11 @@ public class UserCmdService {
         //校验账号密码是否一致
         String passwordByMd5 = PasswordUtils.getMD5(userLoginCmd.getPassword());
         UserInfoResp resp = userCmdRepo.getUserByArgs(userLoginCmd.getPhoneNumber(), passwordByMd5);
+        Preconditions.checkNotNull(resp, "账号或密码错误！");
         //校验该用户是否为正常状态
         if (!userCmdRepo.getUserStatusById(resp.getId())) {
             throw new BizException(USER_STATUS_ERROR.getMessage(), USER_STATUS_ERROR.getCode());
         }
-        Preconditions.checkNotNull(resp, "账号或密码错误！");
         //生成token
         String token = JwtUtils.createToken(resp.getId(), resp.getName());
         resp.setToken(token);

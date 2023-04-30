@@ -50,7 +50,6 @@ public class FundCmdService {
      */
     @Transactional(rollbackFor = Exception.class)
     public void purchase(String token, FundPurchaseCmd cmd) {
-        // 罗康明 TODO: 2023/4/27 校验该用户购买的基金是否已经持有，若已持有则增加余额
         //校验token
         JwtUtils.checkToken(token);
         //获取用户信息，用户id，余额

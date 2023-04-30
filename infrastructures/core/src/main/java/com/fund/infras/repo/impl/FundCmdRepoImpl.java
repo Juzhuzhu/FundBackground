@@ -102,7 +102,6 @@ public class FundCmdRepoImpl implements FundCmdRepo {
 
     @Override
     public void saveOrUpdateUserBalance(String userId, FundPurchaseCmd cmd) {
-        // 罗康明 TODO: 2023/4/27 修改代码，若用户已持有该基金进行更新，未持有进行保存新增，尚未测试
         Preconditions.checkArgument(!Strings.isNullOrEmpty(userId), "传入用户id为空");
         //根据用户id，基金id，未售出为条件判断该用户目前是否持有该基金，持有该基金则进行更新
         LambdaQueryWrapper<FundUserBalancePO> wrapper = Wrappers.lambdaQuery(new FundUserBalancePO());

@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -26,6 +27,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public interface UserQueryRestApi {
     String USER_LIST = CustomerServiceRestConst.USER_ROOT + "/list";
 
+    String USER_INFO = CustomerServiceRestConst.USER_ROOT + "info";
+
     /**
      * 分页查询用户列表
      *
@@ -37,4 +40,10 @@ public interface UserQueryRestApi {
     @ResponseBody
     @PostMapping(USER_LIST)
     Result<IPage<UserResp>> getUserList(@RequestBody UserQry userQry);
+
+    @Parameter(name = "token", in = ParameterIn.HEADER, required = true, description = "认证token", example = CustomerServiceRestConst.EXAMPLE_TOKEN)
+    @Operation(summary = "根据token查询用户信息")
+    @ResponseBody
+    @PostMapping(USER_INFO)
+    Result<UserResp> getUserInfo(HttpServletRequest request);
 }

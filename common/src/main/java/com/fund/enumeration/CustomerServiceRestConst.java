@@ -13,7 +13,7 @@ public final class CustomerServiceRestConst {
     private CustomerServiceRestConst() {
         throw new IllegalStateException();
     }
-
+    //17677487445的token
     public static final String EXAMPLE_TOKEN = "eyJhbGciOiJIUzUxMiIsInppcCI6IkdaSVAifQ.H4sIAAAAAAAA_6tWKi5NUrJScgv1c9ENDXYNUtJRykwBClgYWZqYGFoampuYGVsYGRkbmwFl8hJzU4Fyz1bOeN6zCoiUagH1Lv2ZQAAAAA.S6NYPvitMnOlPFwSfNkMYRm0cOnIyCYyD38jfCeOD8vxlcScCclRDO0K92do6UyzzI3CaMLKTAikxEksezPLFQ";
 
     public static final String DEFAULT_HEAD_IMG_URL = "https://lkm191.oss-cn-guangzhou.aliyuncs.com/Screenshot_20200827_231650.jpg";
