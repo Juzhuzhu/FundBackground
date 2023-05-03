@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fund.dto.cmd.UserUpdateCmd;
+import com.fund.enumeration.CustomerServiceRestConst;
 import com.fund.exception.BizException;
 import com.fund.gateway.UserCmdRepo;
 import com.fund.infras.dao.model.FundAccountPO;
@@ -41,7 +42,9 @@ public class UserCmdRepoImpl implements UserCmdRepo {
     @Override
     public boolean saveUserRegister(UserCmdService.UserInfo userInfo) {
         Preconditions.checkNotNull(userInfo, "UserCmdService应用层传入UserInfo对象为空,注册失败！");
-        return userPersist.save(MAPPER.toUserPo(userInfo));
+        FundUserPO po = MAPPER.toUserPo(userInfo);
+        po.setHeadImgUrl(CustomerServiceRestConst.DEFAULT_HEAD_IMG_URL);
+        return userPersist.save(po);
     }
 
     @Override

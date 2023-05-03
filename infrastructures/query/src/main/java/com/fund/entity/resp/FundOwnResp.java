@@ -25,39 +25,17 @@ import java.util.Date;
 public class FundOwnResp {
     @Schema(title = "主键id")
     private String id;
-
-    /**
-     * 基金id
-     */
-    @Schema(title = "主键id")
+    @Schema(title = "基金id")
     private Integer fundId;
-
-    /**
-     * 基金代码
-     */
+    @Schema(title = "基金代码")
     private String fundCode;
-
-    /**
-     * 基金代码
-     */
+    @Schema(title = "基金名称")
     private String fundName;
-
-    /**
-     * 基金日期
-     */
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     @Schema(title = "基金日期")
     private Date fundDate;
-
-    /**
-     * 买入金额
-     */
     @Schema(title = "买入金额")
     private BigDecimal purchaseAmount;
-
-    /**
-     * 当前余额
-     */
     @Schema(title = "当前余额")
     private BigDecimal balance;
 

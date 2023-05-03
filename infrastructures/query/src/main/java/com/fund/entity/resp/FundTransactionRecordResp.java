@@ -26,29 +26,21 @@ import java.util.Date;
 public class FundTransactionRecordResp {
     @Schema(title = "主键id")
     private String id;
-
     @Schema(title = "用户id")
     private String userId;
-
     @Schema(title = "基金id")
     private Integer fundId;
-
     @Schema(title = "基金代码")
     private String fundCode;
-
     @Schema(title = "基金名称")
     private String fundName;
-
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     @Schema(title = "基金日期")
     private Date fundDate;
-
     @Schema(title = "交易类型，0=购入，1=赎回")
     private String tradeType;
-
     @Schema(title = "交易金额")
     private BigDecimal transactionAmount;
-
     @Schema(title = "交易时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime transactionTime;

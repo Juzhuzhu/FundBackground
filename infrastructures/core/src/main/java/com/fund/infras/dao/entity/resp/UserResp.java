@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
@@ -42,4 +43,6 @@ public class UserResp implements Serializable {
     @Schema(title = "创建时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime utcCreate;
+    @Schema(title = "用户余额")
+    private BigDecimal amount;
 }

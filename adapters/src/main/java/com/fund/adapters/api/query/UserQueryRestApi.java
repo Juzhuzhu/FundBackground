@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public interface UserQueryRestApi {
     String USER_LIST = CustomerServiceRestConst.USER_ROOT + "/list";
 
-    String USER_INFO = CustomerServiceRestConst.USER_ROOT + "info";
+    String USER_INFO = CustomerServiceRestConst.USER_ROOT + "/info";
 
     /**
      * 分页查询用户列表
