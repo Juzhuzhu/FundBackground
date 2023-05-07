@@ -4,6 +4,8 @@ import com.fund.dto.cmd.UserUpdateCmd;
 import com.fund.service.UserCmdService;
 import com.fund.vo.UserInfoResp;
 
+import java.math.BigDecimal;
+
 /**
  * 用户注册登录repo
  * <p>
@@ -84,4 +86,12 @@ public interface UserCmdRepo {
      * @param userUpdateCmd UserUpdateCmd
      */
     Boolean updateUserById(UserUpdateCmd userUpdateCmd);
+
+    /**
+     * 用户充值
+     *
+     * @param token 令牌
+     * @param rechargeNum 充值金额
+     */
+    void updateUserForAmount(String token, BigDecimal rechargeNum);
 }

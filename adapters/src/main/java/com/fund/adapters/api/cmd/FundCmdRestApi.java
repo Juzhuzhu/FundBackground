@@ -57,5 +57,4 @@ public interface FundCmdRestApi {
     @PostMapping(FUND_SALE)
     NoDataResult fundSale(HttpServletRequest request, @RequestParam String id);
 
-    // 罗康明 TODO: 2023/5/3 充值余额接口待实现
 }

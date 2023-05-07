@@ -26,6 +26,7 @@ import org.springframework.validation.annotation.Validated;
 
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Objects;
 
 import static com.fund.enumeration.CodeEnum.*;
@@ -148,11 +149,25 @@ public class UserCmdService {
      *
      * @param userUpdateCmd UserUpdateCmd
      */
+    @Transactional(rollbackFor = Exception.class)
     public void updateUserById(UserUpdateCmd userUpdateCmd) {
         Preconditions.checkNotNull(userUpdateCmd.getId(), "传入id为空");
         if (Boolean.FALSE.equals(userCmdRepo.updateUserById(userUpdateCmd))) {
             throw new BizException(UPDATE_USER_ERROR.getMessage(), UPDATE_USER_ERROR.getCode());
         }
+    }
+
+    /**
+     * 根据用户token充值余额
+     *
+     * @param token       令牌
+     * @param rechargeNum 充值金额
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void recharge(String token, BigDecimal rechargeNum) {
+        Preconditions.checkArgument(StringUtils.isNotBlank(token), "用户令牌为空");
+        //获取用户id和余额
+        userCmdRepo.updateUserForAmount(token, rechargeNum);
     }
 
     @Getter

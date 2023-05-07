@@ -14,6 +14,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 /**
  * api实现
  * <p>
@@ -52,10 +55,30 @@ public class FundQueryRes implements FundQueryRestApi {
     }
 
     @Override
-    public Result<IPage<FundOwnResp>> fundOwnSearch(HttpServletRequest request, @RequestBody PageRequest pageRequest) {
+    public Result<FundOwnResultResp> fundOwnSearch(HttpServletRequest request, @RequestBody PageRequest pageRequest) {
         String token = request.getHeader("token");
         IPage<FundOwnResp> resp = repo.fundOwnSearch(token, pageRequest);
-        return Result.ok(resp);
+        List<FundOwnResp> list = resp.getRecords();
+        //持有数
+        int ownNum = list.size();
+        //买入总额
+        BigDecimal purchaseAmountSum = list.stream()
+                .map(FundOwnResp::getPurchaseAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        //余额总额
+        BigDecimal balanceSum = list.stream()
+                .map(FundOwnResp::getBalance)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        String ratio = purchaseAmountSum + "/" + balanceSum;
+        //利润
+        BigDecimal profit = balanceSum.subtract(purchaseAmountSum);
+        //响应对象组装
+        FundOwnResultResp fundOwnResultResp = new FundOwnResultResp();
+        fundOwnResultResp.setFundOwnRespIpage(resp);
+        fundOwnResultResp.setOwnNum(ownNum);
+        fundOwnResultResp.setRatio(ratio);
+        fundOwnResultResp.setProfit(profit);
+        return Result.ok(fundOwnResultResp);
     }
 
     @Override

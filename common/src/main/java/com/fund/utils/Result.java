@@ -50,7 +50,7 @@ public class Result<T extends Serializable> implements Serializable {
     /**
      * 默认响应码：200成功，500失败，401无权限
      */
-    public static final int OK_200 = 200;
+    public static final int OK_200 = 20000;
     public static final int ERROR_500 = 500;
     public static final int NO_AUTH_401 = 401;
 

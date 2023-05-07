@@ -86,7 +86,7 @@ public interface FundQueryRestApi {
     @Operation(summary = "分页查询用户持有基金")
     @ResponseBody
     @PostMapping(FUND_OWN)
-    Result<IPage<FundOwnResp>> fundOwnSearch(HttpServletRequest request, @RequestBody PageRequest pageRequest);
+    Result<FundOwnResultResp> fundOwnSearch(HttpServletRequest request, @RequestBody PageRequest pageRequest);
 
     /**
      * 用户查询自己的交易记录

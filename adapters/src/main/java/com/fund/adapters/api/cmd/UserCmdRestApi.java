@@ -12,11 +12,14 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.math.BigDecimal;
 
 
 /**
@@ -36,6 +39,7 @@ public interface UserCmdRestApi {
     String USER_DELETE = CustomerServiceRestConst.USER_ROOT + "/delete";
     String USER_UPDATE = CustomerServiceRestConst.USER_ROOT + "/update";
     String USER_ADD = CustomerServiceRestConst.USER_ROOT + "/add";
+    String USER_RECHARGE = CustomerServiceRestConst.USER_ROOT + "/recharge";
 
     /**
      * 用户注册
@@ -94,4 +98,10 @@ public interface UserCmdRestApi {
     @ResponseBody
     @PostMapping(USER_ADD)
     NoDataResult addUser(@Valid @RequestBody UserRegisterCmd userRegisterCmd);
+
+    @Parameter(name = "token", in = ParameterIn.HEADER, required = true, description = "认证token", example = CustomerServiceRestConst.EXAMPLE_TOKEN)
+    @Operation(summary = "用户个人信息-充值余额")
+    @ResponseBody
+    @PostMapping(USER_RECHARGE)
+    NoDataResult recharge(HttpServletRequest request, @RequestParam BigDecimal rechargeNum);
 }

@@ -8,11 +8,14 @@ import com.fund.service.UserCmdService;
 import com.fund.utils.NoDataResult;
 import com.fund.utils.Result;
 import com.fund.vo.UserInfoResp;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.math.BigDecimal;
 
 /**
  * 用户注册登录命令
@@ -60,6 +63,12 @@ public class UserCmdRes implements UserCmdRestApi {
     @Override
     public NoDataResult addUser(@Valid @RequestBody UserRegisterCmd userRegisterCmd) {
         userCmdService.userRegister(userRegisterCmd);
+        return NoDataResult.success();
+    }
+
+    @Override
+    public NoDataResult recharge(HttpServletRequest request, BigDecimal rechargeNum) {
+        userCmdService.recharge(request.getHeader("token"), rechargeNum);
         return NoDataResult.success();
     }
 }

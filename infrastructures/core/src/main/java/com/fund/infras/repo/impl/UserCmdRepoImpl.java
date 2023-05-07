@@ -18,6 +18,8 @@ import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
+
 /**
  * 持久层
  * <p>
@@ -44,6 +46,7 @@ public class UserCmdRepoImpl implements UserCmdRepo {
         Preconditions.checkNotNull(userInfo, "UserCmdService应用层传入UserInfo对象为空,注册失败！");
         FundUserPO po = MAPPER.toUserPo(userInfo);
         po.setHeadImgUrl(CustomerServiceRestConst.DEFAULT_HEAD_IMG_URL);
+        po.setAmount(new BigDecimal(0));
         return userPersist.save(po);
     }
 
@@ -110,6 +113,23 @@ public class UserCmdRepoImpl implements UserCmdRepo {
     public Boolean updateUserById(UserUpdateCmd userUpdateCmd) {
         FundUserPO po = MAPPER.updateCmdtoUserPo(userUpdateCmd);
         return userPersist.updateById(po);
+    }
+
+    @Override
+    public void updateUserForAmount(String token, BigDecimal rechargeNum) {
+        //根据token查询
+        LambdaQueryWrapper<FundUserPO> wrapper = Wrappers.lambdaQuery();
+        wrapper.eq(FundUserPO::getToken, token);
+        FundUserPO po = userPersist.getOne(wrapper);
+        Preconditions.checkNotNull(po, "该令牌没有对应用户");
+        //组装更新对象
+        FundUserPO updatePo = new FundUserPO();
+        updatePo.setId(po.getId());
+        if (po.getAmount() == null) {
+            po.setAmount(new BigDecimal(0));
+        }
+        updatePo.setAmount(po.getAmount().add(rechargeNum));
+        userPersist.updateById(updatePo);
     }
 
 
