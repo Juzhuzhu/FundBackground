@@ -6,9 +6,9 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import static com.fund.adapters.api.cmd.UserCmdRestApi.USER_LOGIN;
-import static com.fund.adapters.api.cmd.UserCmdRestApi.USER_REGISTER;
+import static com.fund.adapters.api.cmd.UserCmdRestApi.*;
 import static com.fund.adapters.api.query.FundQueryRestApi.*;
+import static com.fund.adapters.api.query.UserQueryRestApi.USER_LIST;
 
 /**
  * token拦截器配置类
@@ -64,7 +64,11 @@ public class TokenInterceptorConfig implements WebMvcConfigurer {
                         USER_REGISTER,
                         FUND_LIST,
                         FUND_HISTORY,
-                        FUND_ECHARTS
+                        FUND_ECHARTS,
+                        USER_LIST,
+                        USER_DELETE,
+                        USER_UPDATE,
+                        USER_ADD
                 );
     }
 }

@@ -1,7 +1,6 @@
 package com.fund.infras.dao.entity.resp;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fund.enumeration.UserStateEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,7 +28,7 @@ public class UserResp implements Serializable {
     private String id;
 
     @Schema(title = "用户状态")
-    private UserStateEnum userStateEnum;
+    private String userStateEnum;
 
     @Schema(title = "用户名")
     private String name;

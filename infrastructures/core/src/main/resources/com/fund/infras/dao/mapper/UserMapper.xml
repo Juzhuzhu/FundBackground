@@ -4,16 +4,19 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fund.infras.dao.mapper.UserMapper">
 
-    <select id="selectUserByPage" parameterType="com.fund.infras.dao.entity.qry.UserQry" resultType="com.fund.infras.dao.model.FundUserPO">
+    <select id="selectUserByPage"
+            parameterType="com.fund.infras.dao.entity.qry.UserQry"
+            resultType="com.fund.infras.dao.model.FundUserPO">
         select
-            `id`,`state`,`name`,`head_img_url`,`phone_number`,`utc_create`
+        `id`,`state`,`name`,`head_img_url`,`phone_number`,`utc_create`,`amount`
         from
-            `fund_user`
+        `fund_user`
         where
-            `utc_deleted` = 0
+        `utc_deleted` = 0
         <if test="qry.name != null and qry.name != ''">
             and name like concat('%',#{qry.name},'%')
         </if>
+        order by utc_create desc
     </select>
 
 </mapper>

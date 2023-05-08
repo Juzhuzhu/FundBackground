@@ -67,6 +67,7 @@ public class UserCmdService {
             //手动新增用户未输入密码时，初始密码123456
             String defaultPassword = "123456";
             cmd.setPassword(defaultPassword);
+            cmd.setConfirmPassword(defaultPassword);
         }
         //校验密码和确认密码是否一致
         Preconditions.checkArgument(Objects.equals(cmd.getPassword(), cmd.getConfirmPassword()), "密码和确认密码不一致");

@@ -3,7 +3,6 @@ package com.fund.adapters.api.query.impl;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fund.adapters.api.query.UserQueryRestApi;
-import com.fund.enumeration.UserStateEnum;
 import com.fund.infras.dao.entity.qry.UserQry;
 import com.fund.infras.dao.entity.resp.UserResp;
 import com.fund.infras.dao.mapper.UserMapper;
@@ -52,7 +51,7 @@ public class UserQueryRes implements UserQueryRestApi {
         IPage<UserResp> respPage = userPoPage.convert(userPo -> {
             UserResp userResp = MAPPER.toResp(userPo);
             //设置状态
-            userResp.setUserStateEnum(userPo.getState() == 0 ? UserStateEnum.NORMAL : FORBIDDEN);
+            userResp.setUserStateEnum(userPo.getState() == 0 ? NORMAL.getUserState() : FORBIDDEN.getUserState());
             //从UTC -> 东八区
             userResp.setUtcCreate(DateUtils.toZone(userResp.getUtcCreate(), ZoneOffset.UTC, DateUtils.EIGHTH_TIME_ZONE));
             return userResp;
@@ -67,9 +66,9 @@ public class UserQueryRes implements UserQueryRestApi {
         UserResp userResp = MAPPER.toResp(po);
         userResp.setUtcCreate(DateUtils.toZone(userResp.getUtcCreate(), ZoneOffset.UTC, DateUtils.EIGHTH_TIME_ZONE));
         if (po.getState() == 1) {
-            userResp.setUserStateEnum(FORBIDDEN);
+            userResp.setUserStateEnum(FORBIDDEN.getUserState());
         }
-        userResp.setUserStateEnum(NORMAL);
+        userResp.setUserStateEnum(NORMAL.getUserState());
         return Result.ok(userResp);
     }
 
