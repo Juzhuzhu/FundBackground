@@ -64,8 +64,8 @@ public class UserCmdService {
     public void userRegister(@Valid UserRegisterCmd cmd) {
         Preconditions.checkNotNull(cmd, "注册传入参数为空");
         if (StringUtils.isBlank(cmd.getPassword())) {
-            //手动新增用户未输入密码时，初始密码123456
-            String defaultPassword = "123456";
+            //手动新增用户未输入密码时，初始密码123456789
+            String defaultPassword = "123456789";
             cmd.setPassword(defaultPassword);
             cmd.setConfirmPassword(defaultPassword);
         }
@@ -75,7 +75,6 @@ public class UserCmdService {
         if (!userCmdRepo.getUserByNum(cmd.getPhoneNumber())) {
             throw new BizException(PHONE_NUM_EXIST.getMessage(), PHONE_NUM_EXIST.getCode());
         }
-
         //转换成UserInfo对象
         UserInfo userInfo = MAPPER.toInfo(cmd);
         String userId = String.valueOf(idGenerator.nextId());

@@ -48,7 +48,7 @@ public class XxlDemoHandler {
     }
 
     @XxlJob(("updateFundInfo"))
-    public ReturnT<String> updateFundInfo() throws IOException, InterruptedException {
+    public void updateFundInfo() throws IOException, InterruptedException {
         log.info("----------开始更新基金信息-----------");
         String[] fileNameArray = {
                 "fund_001626_spider.py", "fund_005628_spider.py",
@@ -82,7 +82,6 @@ public class XxlDemoHandler {
             log.info("--正在更新：" + fileName.substring(5, 11));
         }
         log.info("----------更新基金信息完毕-----------");
-        return ReturnT.SUCCESS;
     }
 
     @XxlJob("demo")
