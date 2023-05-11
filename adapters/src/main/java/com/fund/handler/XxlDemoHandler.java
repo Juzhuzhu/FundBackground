@@ -49,13 +49,40 @@ public class XxlDemoHandler {
 
     @XxlJob(("updateFundInfo"))
     public void updateFundInfo() throws IOException, InterruptedException {
-        log.info("----------开始更新基金信息-----------");
+        log.info("----------开始更新第一批基金信息-----------");
         String[] fileNameArray = {
                 "fund_001626_spider.py", "fund_005628_spider.py",
                 "fund_006603_spider.py", "fund_008282_spider.py",
                 "fund_010003_spider.py", "fund_010391_spider.py",
                 "fund_011612_spider.py", "fund_012552_spider.py",
-                "fund_012696_spider.py", "fund_012837_spider.py",
+                "fund_012696_spider.py", "fund_012837_spider.py"
+        };
+        Runtime runtime = Runtime.getRuntime();
+        for (String fileName : fileNameArray) {
+            String execStatement = "python E:\\GraduationProject\\FundBackground\\adapters\\src\\main\\resources\\spider\\" + fileName;
+            // 执行py文件
+            Process proc = runtime.exec(execStatement);
+            BufferedReader stdoutReader = new BufferedReader(new InputStreamReader(proc.getInputStream(), "UTF-8"));
+            BufferedReader stderrReader = new BufferedReader(new InputStreamReader(proc.getErrorStream(), "UTF-8"));
+            String line;
+            log.info("OUTPUT");
+            while ((line = stdoutReader.readLine()) != null) {
+                log.info(line);
+            }
+            while ((line = stderrReader.readLine()) != null) {
+                log.info(line);
+            }
+            int exitVal = proc.waitFor();
+            log.info("process exit value is " + exitVal);
+            log.info("--正在更新：" + fileName.substring(5, 11));
+        }
+        log.info("----------更新第一批基金信息完毕-----------");
+    }
+
+    @XxlJob(("updateFundInfoTwo"))
+    public void updateFundInfoTwo() throws IOException, InterruptedException {
+        log.info("----------开始更新第二批基金信息-----------");
+        String[] fileNameArray = {
                 "fund_012970_spider.py", "fund_013445_spider.py",
                 "fund_013446_spider.py", "fund_013894_spider.py",
                 "fund_014415_spider.py", "fund_014737_spider.py",
@@ -81,7 +108,7 @@ public class XxlDemoHandler {
             log.info("process exit value is " + exitVal);
             log.info("--正在更新：" + fileName.substring(5, 11));
         }
-        log.info("----------更新基金信息完毕-----------");
+        log.info("----------更新第二批基金信息完毕-----------");
     }
 
     @XxlJob("demo")
