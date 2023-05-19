@@ -1,6 +1,9 @@
 package com.fund.infras.dao.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.fund.infras.dao.entity.resp.FundUserBalanceResp;
 import com.fund.infras.dao.model.FundUserBalancePO;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -15,4 +18,6 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface FundUserBalanceMapper extends BaseMapper<FundUserBalancePO> {
+
+    IPage<FundUserBalanceResp> selectUserBalanceByPage(Page<FundUserBalanceResp> page);
 }

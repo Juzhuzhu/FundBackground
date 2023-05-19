@@ -5,6 +5,7 @@ import com.fund.entity.qry.FundHistoryQry;
 import com.fund.entity.qry.FundListQry;
 import com.fund.entity.resp.*;
 import com.fund.enumeration.CustomerServiceRestConst;
+import com.fund.infras.dao.entity.resp.FundUserBalanceResp;
 import com.fund.utils.PageRequest;
 import com.fund.utils.Result;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,16 +31,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 @Tag(name = CustomerServiceRestConst.API_TAG_FUND_QUERY)
 public interface FundQueryRestApi {
-
     String FUND_LIST = CustomerServiceRestConst.FUND_ROOT + "/list";
-
     String FUND_HISTORY = CustomerServiceRestConst.FUND_ROOT + "/history";
-
     String FUND_ECHARTS = CustomerServiceRestConst.FUND_ROOT + "/echarts";
-
     String FUND_OWN = CustomerServiceRestConst.FUND_ROOT + "/own";
-
     String FUND_TRANSACTION_RECORD = CustomerServiceRestConst.FUND_ROOT + "/transaction/record";
+    String FUND_USER_BALANCE = CustomerServiceRestConst.FUND_ROOT + "/user/balance";
 
     /**
      * 分页查询基金列表
@@ -100,4 +97,9 @@ public interface FundQueryRestApi {
     @ResponseBody
     @PostMapping(FUND_TRANSACTION_RECORD)
     Result<IPage<FundTransactionRecordResp>> transactionRecordSearch(HttpServletRequest request, @RequestBody PageRequest pageRequest);
+
+    @Operation(summary = "管理员查询所有用户的持有基金")
+    @ResponseBody
+    @PostMapping(FUND_USER_BALANCE)
+    Result<IPage<FundUserBalanceResp>> fundUserBalanceSearch(@RequestBody PageRequest pageRequest);
 }

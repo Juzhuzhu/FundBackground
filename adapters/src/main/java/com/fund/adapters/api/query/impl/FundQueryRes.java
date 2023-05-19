@@ -1,10 +1,13 @@
 package com.fund.adapters.api.query.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fund.adapters.api.query.FundQueryRestApi;
 import com.fund.entity.qry.FundHistoryQry;
 import com.fund.entity.qry.FundListQry;
 import com.fund.entity.resp.*;
+import com.fund.infras.dao.entity.resp.FundUserBalanceResp;
+import com.fund.infras.dao.mapper.FundUserBalanceMapper;
 import com.fund.repo.FundQueryRepoImpl;
 import com.fund.utils.PageRequest;
 import com.fund.utils.Result;
@@ -31,9 +34,13 @@ public class FundQueryRes implements FundQueryRestApi {
 
     private final FundQueryRepoImpl repo;
 
+    private final FundUserBalanceMapper fundUserBalanceMapper;
 
-    public FundQueryRes(FundQueryRepoImpl repo) {
+
+    public FundQueryRes(FundQueryRepoImpl repo,
+                        FundUserBalanceMapper fundUserBalanceMapper) {
         this.repo = repo;
+        this.fundUserBalanceMapper = fundUserBalanceMapper;
     }
 
     @Override
@@ -85,6 +92,13 @@ public class FundQueryRes implements FundQueryRestApi {
     public Result<IPage<FundTransactionRecordResp>> transactionRecordSearch(HttpServletRequest request, PageRequest pageRequest) {
         String token = request.getHeader("token");
         IPage<FundTransactionRecordResp> resp = repo.transactionRecordSearch(token, pageRequest);
+        return Result.ok(resp);
+    }
+
+    @Override
+    public Result<IPage<FundUserBalanceResp>> fundUserBalanceSearch(@RequestBody PageRequest pageRequest) {
+        Page<FundUserBalanceResp> page = new Page<>(pageRequest.getPageNumber(), pageRequest.getPageSize());
+        IPage<FundUserBalanceResp> resp = fundUserBalanceMapper.selectUserBalanceByPage(page);
         return Result.ok(resp);
     }
 }

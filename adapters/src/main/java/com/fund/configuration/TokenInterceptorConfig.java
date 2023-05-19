@@ -68,7 +68,8 @@ public class TokenInterceptorConfig implements WebMvcConfigurer {
                         USER_LIST,
                         USER_DELETE,
                         USER_UPDATE,
-                        USER_ADD
+                        USER_ADD,
+                        FUND_USER_BALANCE
                 );
     }
 }
